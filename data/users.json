@@ -1,0 +1,48 @@
+[
+  {
+    "id": 1,
+    "name": "Capt. Ananya",
+    "email": "ananya@flightfix.aero",
+    "employeeId": "EMP-001",
+    "password": "Admin123!",
+    "role": "Lead Flight Dispatcher",
+    "clearance": "Clearance Alpha"
+  },
+  {
+    "id": 2,
+    "name": "Marcus Vance",
+    "email": "marcus.vance@flightfix.aero",
+    "employeeId": "EMP-002",
+    "password": "Admin123!",
+    "role": "Lead A&P Powerplant Tech",
+    "clearance": "Clearance Bravo"
+  },
+  {
+    "id": 3,
+    "name": "Elena Rostova",
+    "email": "elena.rostova@flightfix.aero",
+    "employeeId": "EMP-003",
+    "password": "Admin123!",
+    "role": "Avionics Specialist",
+    "clearance": "Clearance Charlie"
+  },
+  {
+    "id": 4,
+    "name": "Lead AME",
+    "email": "engineer@flightfix.com",
+    "employeeId": "EMP-004",
+    "password": "password123",
+    "role": "Aircraft Engineer",
+    "clearance": "Clearance Alpha"
+  },
+  {
+    "id": 1790826390070,
+    "name": "Ananya Agarwal",
+    "email": "ananyaagarwal1402@gmail.com",
+    "employeeId": "EMP-9143",
+    "password": "dhwani123#",
+    "role": "AME",
+    "clearance": "Clearance Alpha",
+    "station": "JFK"
+  }
+]

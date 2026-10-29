@@ -1,0 +1,974 @@
+{
+  "ac": [
+    {
+      "id": "ac_1",
+      "reg": "N789AA",
+      "r": "N789AA",
+      "model": "Boeing 787-9 Dreamliner",
+      "m": "Boeing 787-9 Dreamliner",
+      "serial": "MSN-42098",
+      "flightHours": 14280.0,
+      "h": 14280.0,
+      "cycles": 4120,
+      "c": 4120,
+      "status": "in_service",
+      "aog": 0,
+      "location": "JFK (New York)",
+      "st": "JFK (New York)",
+      "lastCheck": "2026-05-12",
+      "nextCheck": "2026-11-12",
+      "assignedFlight": "FX-101",
+      "assignedTech": ""
+    },
+    {
+      "id": "ac_2",
+      "reg": "N350DL",
+      "r": "N350DL",
+      "model": "Airbus A350-900 XWB",
+      "m": "Airbus A350-900 XWB",
+      "serial": "MSN-50112",
+      "flightHours": 11420.0,
+      "h": 11420.0,
+      "cycles": 3290,
+      "c": 3290,
+      "status": "in_service",
+      "aog": 0,
+      "location": "LHR (London Hangar 4)",
+      "st": "LHR (London Hangar 4)",
+      "lastCheck": "2026-08-01",
+      "nextCheck": "2026-10-15",
+      "assignedFlight": "FX-304",
+      "assignedTech": ""
+    },
+    {
+      "id": "ac_3",
+      "reg": "N738UA",
+      "r": "N738UA",
+      "model": "Boeing 737-800 NextGen",
+      "m": "Boeing 737-800 NextGen",
+      "serial": "MSN-30811",
+      "flightHours": 28940.0,
+      "h": 28940.0,
+      "cycles": 11840,
+      "c": 11840,
+      "status": "in_service",
+      "aog": 0,
+      "location": "DXB (Dubai)",
+      "st": "DXB (Dubai)",
+      "lastCheck": "2026-06-20",
+      "nextCheck": "2026-12-20",
+      "assignedFlight": "FX-508",
+      "assignedTech": ""
+    },
+    {
+      "id": "ac_4",
+      "reg": "N320AF",
+      "r": "N320AF",
+      "model": "Airbus A320neo",
+      "m": "Airbus A320neo",
+      "serial": "MSN-8842",
+      "flightHours": 8900.0,
+      "h": 8900.0,
+      "cycles": 3950,
+      "c": 3950,
+      "status": "in_service",
+      "aog": 0,
+      "location": "HND (Tokyo)",
+      "st": "HND (Tokyo)",
+      "lastCheck": "2026-07-10",
+      "nextCheck": "2027-01-10",
+      "assignedFlight": "FX-702",
+      "assignedTech": ""
+    },
+    {
+      "id": "ac_5",
+      "reg": "N777EK",
+      "r": "N777EK",
+      "model": "Boeing 777-300ER",
+      "m": "Boeing 777-300ER",
+      "serial": "MSN-39120",
+      "flightHours": 32400.0,
+      "h": 32400.0,
+      "cycles": 7100,
+      "c": 7100,
+      "status": "aog",
+      "aog": 0,
+      "location": "SIN (Singapore)",
+      "st": "SIN (Singapore)",
+      "lastCheck": "2026-03-14",
+      "nextCheck": "2026-09-30",
+      "assignedFlight": "FX-910",
+      "assignedTech": ""
+    },
+    {
+      "id": "ac_6",
+      "reg": "VT-TEST",
+      "r": "VT-TEST",
+      "model": "A320",
+      "m": "A320",
+      "serial": "",
+      "flightHours": 0.0,
+      "h": 0.0,
+      "cycles": 0,
+      "c": 0,
+      "status": "in_service",
+      "aog": 0,
+      "location": "JFK",
+      "st": "JFK",
+      "lastCheck": "",
+      "nextCheck": "",
+      "assignedFlight": "",
+      "assignedTech": ""
+    },
+    {
+      "id": "ac_7",
+      "reg": "YAH",
+      "r": "YAH",
+      "model": "A320",
+      "m": "A320",
+      "serial": "",
+      "flightHours": 0.0,
+      "h": 0.0,
+      "cycles": 0,
+      "c": 0,
+      "status": "in_service",
+      "aog": 0,
+      "location": "JFK",
+      "st": "JFK",
+      "lastCheck": "",
+      "nextCheck": "",
+      "assignedFlight": "",
+      "assignedTech": ""
+    },
+    {
+      "id": "ac_8",
+      "reg": "VT-FLA",
+      "r": "VT-FLA",
+      "model": "Airbus A320neo",
+      "m": "Airbus A320neo",
+      "serial": "",
+      "flightHours": 12400.0,
+      "h": 12400.0,
+      "cycles": 4200,
+      "c": 4200,
+      "status": "in_service",
+      "aog": 0,
+      "location": "JFK",
+      "st": "JFK",
+      "lastCheck": "",
+      "nextCheck": "",
+      "assignedFlight": "",
+      "assignedTech": ""
+    },
+    {
+      "id": "ac_9",
+      "reg": "VT-FLB",
+      "r": "VT-FLB",
+      "model": "Airbus A320neo",
+      "m": "Airbus A320neo",
+      "serial": "",
+      "flightHours": 15850.0,
+      "h": 15850.0,
+      "cycles": 5100,
+      "c": 5100,
+      "status": "in_service",
+      "aog": 0,
+      "location": "LHR",
+      "st": "LHR",
+      "lastCheck": "",
+      "nextCheck": "",
+      "assignedFlight": "",
+      "assignedTech": ""
+    },
+    {
+      "id": "ac_10",
+      "reg": "VT-FLC",
+      "r": "VT-FLC",
+      "model": "Boeing 737-800",
+      "m": "Boeing 737-800",
+      "serial": "",
+      "flightHours": 9200.0,
+      "h": 9200.0,
+      "cycles": 3100,
+      "c": 3100,
+      "status": "in_service",
+      "aog": 0,
+      "location": "DXB",
+      "st": "DXB",
+      "lastCheck": "",
+      "nextCheck": "",
+      "assignedFlight": "",
+      "assignedTech": ""
+    },
+    {
+      "id": "ac_11",
+      "reg": "VT-FLD",
+      "r": "VT-FLD",
+      "model": "Boeing 777-300ER",
+      "m": "Boeing 777-300ER",
+      "serial": "",
+      "flightHours": 30110.0,
+      "h": 30110.0,
+      "cycles": 7400,
+      "c": 7400,
+      "status": "aog",
+      "aog": 1,
+      "location": "SIN",
+      "st": "SIN",
+      "lastCheck": "",
+      "nextCheck": "",
+      "assignedFlight": "",
+      "assignedTech": ""
+    },
+    {
+      "id": "ac_12",
+      "reg": "VT-FLE",
+      "r": "VT-FLE",
+      "model": "Boeing 787-9",
+      "m": "Boeing 787-9",
+      "serial": "",
+      "flightHours": 18400.0,
+      "h": 18400.0,
+      "cycles": 4900,
+      "c": 4900,
+      "status": "in_service",
+      "aog": 0,
+      "location": "HND",
+      "st": "HND",
+      "lastCheck": "",
+      "nextCheck": "",
+      "assignedFlight": "",
+      "assignedTech": ""
+    }
+  ],
+  "parts": [
+    {
+      "id": "p_1",
+      "partNo": "p_1",
+      "name": "Titanium Wide-Chord Fan Blade (Stage 1)",
+      "n": "Titanium Wide-Chord Fan Blade (Stage 1)",
+      "ataChapter": "ATA 72",
+      "qty": 12,
+      "q": 12,
+      "minQty": 8,
+      "m": 8,
+      "unitCost": 14500.0,
+      "supplier": "CFM International",
+      "status": "in_stock"
+    },
+    {
+      "id": "p_2",
+      "partNo": "p_2",
+      "name": "X-Band Planar Phased Array Scanner",
+      "n": "X-Band Planar Phased Array Scanner",
+      "ataChapter": "ATA 34",
+      "qty": 2,
+      "q": 2,
+      "minQty": 3,
+      "m": 3,
+      "unitCost": 68000.0,
+      "supplier": "Collins Aerospace",
+      "status": "low_stock"
+    },
+    {
+      "id": "p_3",
+      "partNo": "p_3",
+      "name": "Carbon-Carbon Multi-Disc Main Brake Pack",
+      "n": "Carbon-Carbon Multi-Disc Main Brake Pack",
+      "ataChapter": "ATA 32",
+      "qty": 8,
+      "q": 8,
+      "minQty": 6,
+      "m": 6,
+      "unitCost": 22000.0,
+      "supplier": "Safran Landing Systems",
+      "status": "in_stock"
+    },
+    {
+      "id": "p_4",
+      "partNo": "p_4",
+      "name": "Leading-Edge Slat Rotary Actuator Ballscrew",
+      "n": "Leading-Edge Slat Rotary Actuator Ballscrew",
+      "ataChapter": "ATA 27",
+      "qty": 4,
+      "q": 4,
+      "minQty": 4,
+      "m": 4,
+      "unitCost": 18500.0,
+      "supplier": "Liebherr Aerospace",
+      "status": "in_stock"
+    },
+    {
+      "id": "p_5",
+      "partNo": "p_5",
+      "name": "Dual High-Energy APU Turbine Igniter Plug",
+      "n": "Dual High-Energy APU Turbine Igniter Plug",
+      "ataChapter": "ATA 49",
+      "qty": 18,
+      "q": 18,
+      "minQty": 10,
+      "m": 10,
+      "unitCost": 1250.0,
+      "supplier": "Honeywell Aerospace",
+      "status": "in_stock"
+    },
+    {
+      "id": "p_6",
+      "partNo": "p_6",
+      "name": "10.4-inch AMLCD Flight Deck PFD/ND Unit",
+      "n": "10.4-inch AMLCD Flight Deck PFD/ND Unit",
+      "ataChapter": "ATA 31",
+      "qty": 3,
+      "q": 3,
+      "minQty": 4,
+      "m": 4,
+      "unitCost": 48000.0,
+      "supplier": "Honeywell Aerospace",
+      "status": "low_stock"
+    },
+    {
+      "id": "p_7",
+      "partNo": "p_7",
+      "name": "Over-Wing Inflatable Evacuation Slide Pack",
+      "n": "Over-Wing Inflatable Evacuation Slide Pack",
+      "ataChapter": "ATA 52",
+      "qty": 5,
+      "q": 5,
+      "minQty": 4,
+      "m": 4,
+      "unitCost": 16200.0,
+      "supplier": "Goodrich / UTC Aerospace",
+      "status": "in_stock"
+    },
+    {
+      "id": "p_8",
+      "partNo": "p_8",
+      "name": "Submerged AC Fuel Boost Pump (3-Phase)",
+      "n": "Submerged AC Fuel Boost Pump (3-Phase)",
+      "ataChapter": "ATA 28",
+      "qty": 6,
+      "q": 6,
+      "minQty": 6,
+      "m": 6,
+      "unitCost": 9400.0,
+      "supplier": "Parker Aerospace",
+      "status": "in_stock"
+    },
+    {
+      "id": "BRK",
+      "partNo": "BRK",
+      "name": "part1",
+      "n": "part1",
+      "ataChapter": "ATA 72",
+      "qty": 2,
+      "q": 2,
+      "minQty": 1,
+      "m": 1,
+      "unitCost": 0.0,
+      "supplier": "",
+      "status": "in_stock"
+    },
+    {
+      "id": "MW-2231",
+      "partNo": "MW-2231",
+      "name": "Main wheel assembly",
+      "n": "Main wheel assembly",
+      "ataChapter": "ATA 72",
+      "qty": 4,
+      "q": 4,
+      "minQty": 3,
+      "m": 3,
+      "unitCost": 8500.0,
+      "supplier": "",
+      "status": "in_stock"
+    },
+    {
+      "id": "HP-887",
+      "partNo": "HP-887",
+      "name": "Hydraulic pump",
+      "n": "Hydraulic pump",
+      "ataChapter": "ATA 72",
+      "qty": 2,
+      "q": 2,
+      "minQty": 2,
+      "m": 2,
+      "unitCost": 14200.0,
+      "supplier": "",
+      "status": "in_stock"
+    },
+    {
+      "id": "BP-104",
+      "partNo": "BP-104",
+      "name": "Brake pad set",
+      "n": "Brake pad set",
+      "ataChapter": "ATA 72",
+      "qty": 18,
+      "q": 18,
+      "minQty": 8,
+      "m": 8,
+      "unitCost": 3100.0,
+      "supplier": "",
+      "status": "in_stock"
+    },
+    {
+      "id": "FF-552",
+      "partNo": "FF-552",
+      "name": "Fuel filter",
+      "n": "Fuel filter",
+      "ataChapter": "ATA 72",
+      "qty": 6,
+      "q": 6,
+      "minQty": 6,
+      "m": 6,
+      "unitCost": 950.0,
+      "supplier": "",
+      "status": "in_stock"
+    }
+  ],
+  "wo": [
+    {
+      "id": "wo_1",
+      "aircraft": "N350DL",
+      "a": "N350DL",
+      "title": "CFM Turbofan Borescope Inspection & Fan Blade Balancing",
+      "kind": "Engine Insp.",
+      "k": "Engine Insp.",
+      "bay": "Bay 1",
+      "b": "Bay 1",
+      "day": "Mon",
+      "d": "Mon",
+      "status": "done",
+      "s": "done",
+      "priority": "urgent",
+      "checklist": [
+        [
+          "Lock out engine starter pneumatic valve",
+          1
+        ],
+        [
+          "Perform Stage 1 fan acoustic resonance check",
+          1
+        ],
+        [
+          "Borescope inspection of HP compressor blades",
+          1
+        ],
+        [
+          "Calibrate FADEC vibration sensor telemetry",
+          1
+        ]
+      ],
+      "c": [
+        [
+          "Lock out engine starter pneumatic valve",
+          1
+        ],
+        [
+          "Perform Stage 1 fan acoustic resonance check",
+          1
+        ],
+        [
+          "Borescope inspection of HP compressor blades",
+          1
+        ],
+        [
+          "Calibrate FADEC vibration sensor telemetry",
+          1
+        ]
+      ],
+      "parts": [
+        {
+          "partNo": "FAN-BLADE-TI",
+          "qty": 2
+        }
+      ],
+      "p": [
+        {
+          "partNo": "FAN-BLADE-TI",
+          "qty": 2
+        }
+      ],
+      "assignedTo": "Marcus Vance"
+    },
+    {
+      "id": "wo_2",
+      "aircraft": "N777EK",
+      "a": "N777EK",
+      "title": "Main Landing Gear Carbon Brake Pack Overhaul",
+      "kind": "C-Check",
+      "k": "C-Check",
+      "bay": "Bay 1",
+      "b": "Bay 1",
+      "day": "Mon",
+      "d": "Mon",
+      "status": "open",
+      "s": "open",
+      "priority": "aog",
+      "checklist": [
+        [
+          "Jack aircraft on main gear landing bogie pads",
+          0
+        ],
+        [
+          "Bleed hydraulic brake line system B",
+          0
+        ],
+        [
+          "Mount carbon disc wear pack and torque to 450 Nm",
+          0
+        ],
+        [
+          "Anti-skid telemetry dynamic rollout simulation",
+          0
+        ]
+      ],
+      "c": [
+        [
+          "Jack aircraft on main gear landing bogie pads",
+          0
+        ],
+        [
+          "Bleed hydraulic brake line system B",
+          0
+        ],
+        [
+          "Mount carbon disc wear pack and torque to 450 Nm",
+          0
+        ],
+        [
+          "Anti-skid telemetry dynamic rollout simulation",
+          0
+        ]
+      ],
+      "parts": [
+        {
+          "partNo": "BRAKE-DISC-CARB",
+          "qty": 4
+        }
+      ],
+      "p": [
+        {
+          "partNo": "BRAKE-DISC-CARB",
+          "qty": 4
+        }
+      ],
+      "assignedTo": "Jamal Harris"
+    },
+    {
+      "id": "wo_3",
+      "aircraft": "N789AA",
+      "a": "N789AA",
+      "title": "Weather Radar Planar Array Azimuth Calibration",
+      "kind": "A-Check",
+      "k": "A-Check",
+      "bay": "Bay 1",
+      "b": "Bay 1",
+      "day": "Mon",
+      "d": "Mon",
+      "status": "done",
+      "s": "done",
+      "priority": "routine",
+      "checklist": [
+        [
+          "Open forward nose radome cowl hinge",
+          1
+        ],
+        [
+          "Verify \u00b190\u00b0 sweep angle mechanical stops",
+          1
+        ],
+        [
+          "RF output transmitter power check (150W)",
+          1
+        ]
+      ],
+      "c": [
+        [
+          "Open forward nose radome cowl hinge",
+          1
+        ],
+        [
+          "Verify \u00b190\u00b0 sweep angle mechanical stops",
+          1
+        ],
+        [
+          "RF output transmitter power check (150W)",
+          1
+        ]
+      ],
+      "parts": [],
+      "p": [],
+      "assignedTo": "Elena Rostova"
+    },
+    {
+      "id": "2",
+      "aircraft": "VT-FLD",
+      "a": "VT-FLD",
+      "title": "Turbine Hot Section Inspection",
+      "kind": "Engine Insp.",
+      "k": "Engine Insp.",
+      "bay": "Bay 3",
+      "b": "Bay 3",
+      "day": "Tue",
+      "d": "Tue",
+      "status": "open",
+      "s": "open",
+      "priority": "Routine",
+      "checklist": [
+        [
+          "Borescope inspection of turbine blades",
+          0
+        ],
+        [
+          "Spectrometric oil analysis sample",
+          0
+        ],
+        [
+          "Torque-check pylon mounting bolts",
+          0
+        ]
+      ],
+      "c": [
+        [
+          "Borescope inspection of turbine blades",
+          0
+        ],
+        [
+          "Spectrometric oil analysis sample",
+          0
+        ],
+        [
+          "Torque-check pylon mounting bolts",
+          0
+        ]
+      ],
+      "parts": [
+        {
+          "id": "HP-887",
+          "q": 1
+        }
+      ],
+      "p": [
+        {
+          "id": "HP-887",
+          "q": 1
+        }
+      ],
+      "assignedTo": "Elena Rostova"
+    },
+    {
+      "id": "1",
+      "aircraft": "VT-FLB",
+      "a": "VT-FLB",
+      "title": "Scheduled C-Check Heavy Maintenance",
+      "kind": "C-Check",
+      "k": "C-Check",
+      "bay": "Bay 1",
+      "b": "Bay 1",
+      "day": "Mon",
+      "d": "Mon",
+      "status": "done",
+      "s": "done",
+      "priority": "High",
+      "checklist": [
+        [
+          "Structural inspection & rivet audit",
+          1
+        ],
+        [
+          "Landing gear overhaul & seal test",
+          1
+        ],
+        [
+          "Cabin environmental & pressurization test",
+          1
+        ],
+        [
+          "Engine borescope & compressor check",
+          1
+        ],
+        [
+          "Flight control fly-by-wire calibration",
+          1
+        ]
+      ],
+      "c": [
+        [
+          "Structural inspection & rivet audit",
+          1
+        ],
+        [
+          "Landing gear overhaul & seal test",
+          1
+        ],
+        [
+          "Cabin environmental & pressurization test",
+          1
+        ],
+        [
+          "Engine borescope & compressor check",
+          1
+        ],
+        [
+          "Flight control fly-by-wire calibration",
+          1
+        ]
+      ],
+      "parts": [
+        {
+          "id": "BP-104",
+          "q": 4
+        }
+      ],
+      "p": [
+        {
+          "id": "BP-104",
+          "q": 4
+        }
+      ],
+      "assignedTo": "Marcus Vance"
+    }
+  ],
+  "po": [
+    {
+      "id": "po_1",
+      "partId": "",
+      "p": "",
+      "quantity": 1,
+      "q": 1,
+      "status": "approved",
+      "s": "approved",
+      "note": "",
+      "totalCost": 0.0
+    },
+    {
+      "id": "po_2",
+      "partId": "",
+      "p": "",
+      "quantity": 1,
+      "q": 1,
+      "status": "submitted",
+      "s": "submitted",
+      "note": "",
+      "totalCost": 0.0
+    },
+    {
+      "id": "po_3",
+      "partId": "",
+      "p": "",
+      "quantity": 1,
+      "q": 1,
+      "status": "received",
+      "s": "received",
+      "note": "",
+      "totalCost": 0.0
+    },
+    {
+      "id": "po_1790787357813",
+      "partId": "p_7",
+      "p": "p_7",
+      "quantity": 1,
+      "q": 1,
+      "status": "pending",
+      "s": "pending",
+      "note": "manual reorder",
+      "totalCost": 0.0
+    },
+    {
+      "id": "po_1790787412100",
+      "partId": "BRK",
+      "p": "BRK",
+      "quantity": 1,
+      "q": 1,
+      "status": "pending",
+      "s": "pending",
+      "note": "manual reorder",
+      "totalCost": 0.0
+    },
+    {
+      "id": "po_1790787447589",
+      "partId": "BRK",
+      "p": "BRK",
+      "quantity": 1,
+      "q": 1,
+      "status": "pending",
+      "s": "pending",
+      "note": "manual reorder",
+      "totalCost": 0.0
+    },
+    {
+      "id": "po_1790787457174",
+      "partId": "BRK",
+      "p": "BRK",
+      "quantity": 1,
+      "q": 1,
+      "status": "pending",
+      "s": "pending",
+      "note": "manual reorder",
+      "totalCost": 0.0
+    },
+    {
+      "id": "po_1790787496665",
+      "partId": "p_5",
+      "p": "p_5",
+      "quantity": 4,
+      "q": 4,
+      "status": "pending",
+      "s": "pending",
+      "note": "manual ERP order",
+      "totalCost": 0.0
+    },
+    {
+      "id": "po_1790787519978",
+      "partId": "p_5",
+      "p": "p_5",
+      "quantity": 1,
+      "q": 1,
+      "status": "pending",
+      "s": "pending",
+      "note": "manual reorder",
+      "totalCost": 0.0
+    },
+    {
+      "id": "po_1790787551201",
+      "partId": "BRK",
+      "p": "BRK",
+      "quantity": 2,
+      "q": 2,
+      "status": "pending",
+      "s": "pending",
+      "note": "manual ERP order",
+      "totalCost": 0.0
+    },
+    {
+      "id": "po_1790844997670",
+      "partId": "BRK",
+      "p": "BRK",
+      "quantity": 1,
+      "q": 1,
+      "status": "pending",
+      "s": "pending",
+      "note": "manual reorder",
+      "totalCost": 0.0
+    },
+    {
+      "id": "po_1793120359165",
+      "partId": "MW-2231",
+      "p": "MW-2231",
+      "quantity": 4,
+      "q": 4,
+      "status": "pending",
+      "s": "pending",
+      "note": "manual reorder",
+      "totalCost": 0.0
+    },
+    {
+      "id": "po_1793120360256",
+      "partId": "HP-887",
+      "p": "HP-887",
+      "quantity": 4,
+      "q": 4,
+      "status": "pending",
+      "s": "pending",
+      "note": "manual reorder",
+      "totalCost": 0.0
+    },
+    {
+      "id": "po_1793120364737",
+      "partId": "BP-104",
+      "p": "BP-104",
+      "quantity": 1,
+      "q": 1,
+      "status": "pending",
+      "s": "pending",
+      "note": "manual reorder",
+      "totalCost": 0.0
+    }
+  ],
+  "routes": [
+    {
+      "id": "rt_1",
+      "flightNumber": "",
+      "origin": "JFK",
+      "destination": "",
+      "scheduledDeparture": "",
+      "distance": 0,
+      "active": true
+    },
+    {
+      "id": "rt_2",
+      "flightNumber": "",
+      "origin": "LHR",
+      "destination": "",
+      "scheduledDeparture": "",
+      "distance": 0,
+      "active": true
+    },
+    {
+      "id": "rt_3",
+      "flightNumber": "",
+      "origin": "DXB",
+      "destination": "",
+      "scheduledDeparture": "",
+      "distance": 0,
+      "active": true
+    },
+    {
+      "id": "rt_4",
+      "flightNumber": "",
+      "origin": "HND",
+      "destination": "",
+      "scheduledDeparture": "",
+      "distance": 0,
+      "active": true
+    },
+    {
+      "id": "rt_5",
+      "flightNumber": "",
+      "origin": "SYD",
+      "destination": "",
+      "scheduledDeparture": "",
+      "distance": 0,
+      "active": true
+    }
+  ],
+  "technicians": [
+    {
+      "id": "tech_1",
+      "name": "Marcus Vance",
+      "role": "AME",
+      "station": "JFK",
+      "clearance": "Clearance Alpha",
+      "status": "assigned",
+      "currentWO": "wo_1"
+    },
+    {
+      "id": "tech_2",
+      "name": "Elena Rostova",
+      "role": "AME",
+      "station": "JFK",
+      "clearance": "Clearance Alpha",
+      "status": "available",
+      "currentWO": null
+    },
+    {
+      "id": "tech_3",
+      "name": "Jamal Harris",
+      "role": "AME",
+      "station": "JFK",
+      "clearance": "Clearance Alpha",
+      "status": "assigned",
+      "currentWO": "wo_2"
+    },
+    {
+      "id": "tech_4",
+      "name": "Priya Sharma",
+      "role": "AME",
+      "station": "JFK",
+      "clearance": "Clearance Alpha",
+      "status": "available",
+      "currentWO": null
+    }
+  ],
+  "feed": []
+}
