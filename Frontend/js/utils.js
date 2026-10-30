@@ -79,3 +79,34 @@ function po(partId, qty, why) {
   S.po.unshift({ id: newId, p: partId, q: parseInt(qty, 10), s: "pending" });
   note("Procurement", "PO raised for " + qty + "× " + partId + " (" + why + ")");
 }
+
+/* Centralized Session & Authentication Status */
+function getStoredUser() {
+  try {
+    var raw = localStorage.getItem("flightfix_current_user") || localStorage.getItem("flightfix_user");
+    if (!raw || raw === "undefined" || raw === "null") return null;
+    var u = JSON.parse(raw);
+    if (u && (u.role || u.email || u.employeeId)) return u;
+    return null;
+  } catch (e) {
+    return null;
+  }
+}
+
+function isUserLoggedIn() {
+  var u = getStoredUser();
+  return !!(u && (u.role || u.email || u.employeeId));
+}
+
+window.getStoredUser = getStoredUser;
+window.isUserLoggedIn = isUserLoggedIn;
+
+function isUserAdmin(u) {
+  if (!u) u = getStoredUser();
+  if (!u) return false;
+  var role = (u.role || "").toLowerCase();
+  var email = (u.email || "").toLowerCase();
+  return role.includes("admin") || role.includes("dispatcher") || email.includes("admin") || email === "ananya@flightfix.aero";
+}
+window.isUserAdmin = isUserAdmin;
+

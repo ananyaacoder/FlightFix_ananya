@@ -2,6 +2,21 @@ function rInv() {
       var invEl = $("inv");
       if (!invEl) return;
 
+      var loggedIn = (typeof isUserLoggedIn === "function") ? isUserLoggedIn() : false;
+      var user = (typeof getStoredUser === "function") ? getStoredUser() : null;
+      var isAdmin = loggedIn && ((typeof isUserAdmin === "function") ? isUserAdmin(user) : !!(user && user.role && user.role.toLowerCase().includes("admin")));
+
+      if (!loggedIn) {
+        invEl.style.display = "none";
+        if (typeof go === "function") go("login");
+        return;
+      }
+      if (!isAdmin) {
+        invEl.style.display = "none";
+        if (typeof go === "function") go("dash");
+        return;
+      }
+
       var qVal = S.q || "";
 
       invEl.innerHTML =

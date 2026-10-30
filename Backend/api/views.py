@@ -10,6 +10,7 @@ from django.views.decorators.http import require_http_methods
 from django.conf import settings
 from django.db import models
 from django.db.models import Q
+from django.contrib.auth.hashers import make_password, check_password
 
 from .models import (
     CrewUser, Aircraft, Part, WorkOrder,
@@ -71,6 +72,37 @@ def get_full_state_from_db_or_json():
     }
 
 
+# Password verification & secure hashing helpers
+def verify_user_password(raw_password, stored_password):
+    if not raw_password or not stored_password:
+        return False
+    # 1. Plain text comparison (for legacy seeded accounts)
+    if raw_password == stored_password:
+        return True
+    # 2. Django PBKDF2/SHA256 password hash check
+    try:
+        if check_password(raw_password, stored_password):
+            return True
+    except Exception:
+        pass
+    # 3. Simple SHA256 fallback
+    try:
+        import hashlib
+        sha = hashlib.sha256(raw_password.encode('utf-8')).hexdigest()
+        if sha == stored_password:
+            return True
+    except Exception:
+        pass
+    return False
+
+def hash_password(raw_password):
+    try:
+        return make_password(raw_password)
+    except Exception:
+        import hashlib
+        return hashlib.sha256(raw_password.encode('utf-8')).hexdigest()
+
+
 # ==============================================================================
 # 1. AUTHENTICATION VIEWS (/api/auth)
 # ==============================================================================
@@ -83,44 +115,75 @@ def auth_login(request):
     except Exception:
         return JsonResponse({'success': False, 'error': 'Invalid JSON body'}, status=400)
 
-    raw_id = payload.get('identifier') or payload.get('email') or ''
-    ident = raw_id.strip().lower()
+    raw_id = payload.get('identifier') or payload.get('email') or payload.get('employeeId') or ''
+    ident = raw_id.strip()
     password = (payload.get('password') or '').strip()
 
     if not ident or not password:
-        return JsonResponse({'success': False, 'error': 'Email/ID and password required'}, status=400)
+        return JsonResponse({'success': False, 'error': 'Registered email or employee ID and password are required.'}, status=400)
 
-    # 1. Check SQLite database
     matched_user = None
+
+    # 1. Check SQLite database (by email or employee_id, case-insensitive)
     try:
         user_obj = CrewUser.objects.filter(
             models.Q(email__iexact=ident) | models.Q(employee_id__iexact=ident)
         ).first()
-        if user_obj and user_obj.password == password:
+        if user_obj and verify_user_password(password, user_obj.password):
+            # If stored as plain-text, upgrade to secure hashed password
+            if user_obj.password == password:
+                user_obj.password = hash_password(password)
+                user_obj.save(update_fields=['password'])
             matched_user = user_obj.to_dict()
-    except Exception:
-        pass
+    except Exception as e:
+        print("[Auth Login] SQLite lookup error:", e)
 
-    # 2. Check users.json fallback
-    if not matched_user:
-        users = load_json_file(USERS_FILE) or []
-        for u in users:
-            match_email = u.get('email', '').strip().lower() == ident
-            match_emp = u.get('employeeId', '').strip().lower() == ident
-            if (match_email or match_emp) and u.get('password') == password:
-                matched_user = {
-                    'id': u.get('id'),
-                    'name': u.get('name'),
-                    'email': u.get('email'),
-                    'employeeId': u.get('employeeId'),
-                    'role': u.get('role', 'Lead Flight Dispatcher'),
-                    'clearance': u.get('clearance', 'Clearance Alpha'),
-                    'station': u.get('station', 'JFK'),
+    # 2. Check users.json fallback / sync
+    users = load_json_file(USERS_FILE) or []
+    json_matched = None
+    for idx, u in enumerate(users):
+        match_email = u.get('email', '').strip().lower() == ident.lower()
+        match_emp = u.get('employeeId', '').strip().lower() == ident.lower()
+        if (match_email or match_emp) and verify_user_password(password, u.get('password')):
+            json_matched = u
+            # If plain text, upgrade in json too
+            if u.get('password') == password:
+                users[idx]['password'] = hash_password(password)
+                save_json_file(USERS_FILE, users)
+            break
+
+    if not matched_user and json_matched:
+        matched_user = {
+            'id': json_matched.get('id'),
+            'name': json_matched.get('name'),
+            'email': json_matched.get('email'),
+            'employeeId': json_matched.get('employeeId'),
+            'role': json_matched.get('role', 'Field Technician'),
+            'clearance': json_matched.get('clearance', 'Clearance Alpha'),
+            'station': json_matched.get('station', 'JFK'),
+        }
+        # Sync into SQLite
+        try:
+            CrewUser.objects.get_or_create(
+                email__iexact=json_matched.get('email'),
+                defaults={
+                    'name': json_matched.get('name', 'Crew Member'),
+                    'email': json_matched.get('email'),
+                    'employee_id': json_matched.get('employeeId', f"EMP-{random.randint(1000, 9999)}"),
+                    'password': json_matched.get('password'),
+                    'role': json_matched.get('role', 'Field Technician'),
+                    'clearance': json_matched.get('clearance', 'Clearance Alpha'),
+                    'station': json_matched.get('station', 'JFK'),
                 }
-                break
+            )
+        except Exception:
+            pass
 
     if not matched_user:
-        return JsonResponse({'success': False, 'error': 'Invalid credentials'}, status=401)
+        return JsonResponse({
+            'success': False,
+            'error': 'Invalid credentials. Please verify your registered email/employee ID and password.'
+        }, status=401)
 
     token = f"flightfix_{int(datetime.now().timestamp() * 1000)}"
     return JsonResponse({
@@ -140,58 +203,92 @@ def auth_signup(request):
 
     email = (payload.get('email') or '').strip().lower()
     password = (payload.get('password') or '').strip()
-    name = (payload.get('name') or '').strip() or 'Flight Crew'
-    role = payload.get('role') or 'Lead Flight Dispatcher'
-    clearance = payload.get('clearance') or 'Clearance Alpha'
-    station = payload.get('station') or 'JFK'
+    name = (payload.get('name') or '').strip() or 'Flight Crew Member'
+    raw_role = (payload.get('role') or 'user').strip().lower()
+    role = 'admin' if 'admin' in raw_role else 'user'
+    role_display = 'Company Admin' if role == 'admin' else 'Field Technician'
+    clearance = payload.get('clearance') or ('Clearance Alpha' if role == 'admin' else 'Clearance Bravo')
+    station = (payload.get('station') or 'JFK').strip().upper()
     employee_id = (payload.get('employeeId') or payload.get('employee_id') or '').strip()
 
-    if not email or not password:
-        return JsonResponse({'success': False, 'error': 'Email and password required'}, status=400)
-
+    if not email:
+        return JsonResponse({'success': False, 'error': 'Official work email is required.'}, status=400)
+    if not password or len(password) < 6:
+        return JsonResponse({'success': False, 'error': 'Password must be at least 6 characters long for security and integrity.'}, status=400)
     if not employee_id:
         employee_id = f"EMP-{random.randint(1000, 9999)}"
 
-    # Save to SQLite if possible
+    # 1. STRICT DUPLICATE PREVENTION IN SQLITE
+    try:
+        if CrewUser.objects.filter(email__iexact=email).exists():
+            return JsonResponse({
+                'success': False,
+                'error': f"The email '{email}' is already registered to an existing account. Duplicate accounts are prohibited. Please sign in."
+            }, status=409)
+        if CrewUser.objects.filter(employee_id__iexact=employee_id).exists():
+            return JsonResponse({
+                'success': False,
+                'error': f"The Employee ID '{employee_id}' is already registered to an existing crew member. Duplicate IDs are prohibited."
+            }, status=409)
+    except Exception as e:
+        print("[Auth Signup] DB check error:", e)
+
+    # 2. STRICT DUPLICATE PREVENTION IN USERS.JSON
+    users = load_json_file(USERS_FILE) or []
+    for u in users:
+        u_email = u.get('email', '').strip().lower()
+        u_emp = u.get('employeeId', '').strip().lower()
+        if u_email == email:
+            return JsonResponse({
+                'success': False,
+                'error': f"The email '{email}' is already registered. Duplicate accounts are prohibited. Please sign in."
+            }, status=409)
+        if u_emp == employee_id.lower():
+            return JsonResponse({
+                'success': False,
+                'error': f"The Employee ID '{employee_id}' is already registered to an existing crew member. Duplicate IDs are prohibited."
+            }, status=409)
+
+    # 3. SECURELY HASH PASSWORD FOR PRIVACY & INTEGRITY
+    hashed_pass = hash_password(password)
+
     new_user_dict = {
         'id': int(datetime.now().timestamp() * 1000),
         'name': name,
         'email': email,
         'employeeId': employee_id,
-        'role': role,
+        'role': role_display,
         'clearance': clearance,
         'station': station,
     }
 
+    # 4. SAVE INTO SQLITE
     try:
-        if CrewUser.objects.filter(email__iexact=email).exists():
-            return JsonResponse({'success': False, 'error': 'Account already exists'}, status=409)
         user_obj = CrewUser.objects.create(
             name=name,
             email=email,
             employee_id=employee_id,
-            password=password,
-            role=role,
+            password=hashed_pass,
+            role=role_display,
             clearance=clearance,
             station=station
         )
         new_user_dict = user_obj.to_dict()
-    except Exception:
-        pass
+    except Exception as e:
+        print("[Auth Signup] DB insert error:", e)
 
-    # Also persist to users.json
-    users = load_json_file(USERS_FILE) or []
-    users.append({**new_user_dict, 'password': password})
+    # 5. SAVE INTO USERS.JSON (With hashed password)
+    users.append({**new_user_dict, 'password': hashed_pass})
     save_json_file(USERS_FILE, users)
 
+    # Return response WITHOUT password for privacy
     return JsonResponse({
         'success': True,
-        'message': 'Badge provisioned successfully',
+        'message': f"Account registered successfully for {name} [{role_display}].",
         'user': new_user_dict
     }, status=201)
 
 
-@require_http_methods(["GET"])
 def auth_me(request):
     return JsonResponse({'success': True, 'status': 'active'})
 

@@ -6,6 +6,21 @@ function rTech() {
   var techEl = $("tech");
   if (!techEl) return;
 
+  var loggedIn = (typeof isUserLoggedIn === "function") ? isUserLoggedIn() : false;
+  var user = (typeof getStoredUser === "function") ? getStoredUser() : null;
+  var isAdmin = loggedIn && ((typeof isUserAdmin === "function") ? isUserAdmin(user) : !!(user && user.role && user.role.toLowerCase().includes("admin")));
+
+  if (!loggedIn) {
+    techEl.style.display = "none";
+    if (typeof go === "function") go("login");
+    return;
+  }
+  if (!isAdmin) {
+    techEl.style.display = "none";
+    if (typeof go === "function") go("dash");
+    return;
+  }
+
   var orders = (S && S.wo && S.wo.length) ? S.wo : [];
 
   // Find active work order

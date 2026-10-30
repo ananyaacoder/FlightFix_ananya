@@ -4,7 +4,7 @@
     "name": "Capt. Ananya",
     "email": "ananya@flightfix.aero",
     "employeeId": "EMP-001",
-    "password": "Admin123!",
+    "password": "pbkdf2_sha256$1500000$jw5Y9cRzD8a6agRCHjLz5e$Xm8/BFreqsbJCO+UlYCMBv0UHFiJxBPGjDzPwXInR74=",
     "role": "Lead Flight Dispatcher",
     "clearance": "Clearance Alpha"
   },
@@ -31,7 +31,7 @@
     "name": "Lead AME",
     "email": "engineer@flightfix.com",
     "employeeId": "EMP-004",
-    "password": "password123",
+    "password": "pbkdf2_sha256$1500000$8Hp9nVjI4MNo9NRTXJJXpn$u+9qZ3th5rcPBu4KShl85teLhHrIQ/S3rSZkl0ZRYaE=",
     "role": "Aircraft Engineer",
     "clearance": "Clearance Alpha"
   },
@@ -44,5 +44,25 @@
     "role": "AME",
     "clearance": "Clearance Alpha",
     "station": "JFK"
+  },
+  {
+    "id": 6,
+    "name": "Test AME John",
+    "email": "test.ame.304@flightfix.aero",
+    "employeeId": "AME-9941",
+    "role": "Field Technician",
+    "clearance": "Clearance Bravo",
+    "station": "ORD",
+    "password": "pbkdf2_sha256$1500000$wiMnSpxfIp4emLrLMKESKN$6lCQOJAcNqA+g8IutNWviVNYLfsJXhBjiIov6w9kQmo="
+  },
+  {
+    "id": 7,
+    "name": "Dhwani Agarwal",
+    "email": "dhwaniagarwal882@gmail.com",
+    "employeeId": "AME-874",
+    "role": "Company Admin",
+    "clearance": "Clearance Alpha",
+    "station": "SIH",
+    "password": "pbkdf2_sha256$1500000$bKKxQGgTGFiHUAubxsRhIn$8j6JV1PUYjTfyQJ4bv0fk21DrQ08z2WaYsFzVBHI8PI="
   }
 ]

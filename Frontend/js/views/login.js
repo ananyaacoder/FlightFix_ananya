@@ -25,6 +25,50 @@
       }
     }
 
+    // Persistent local user registry for offline resilience & cross-session login
+function getLocalRegisteredUsers() {
+  try {
+    var raw = localStorage.getItem("flightfix_registered_users");
+    if (!raw) return [];
+    var parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function saveLocalRegisteredUser(user, rawPass) {
+  if (!user || !user.email) return;
+  try {
+    var users = getLocalRegisteredUsers();
+    var emailKey = user.email.toLowerCase();
+    var empKey = (user.employeeId || "").toLowerCase();
+
+    var existingIdx = users.findIndex(function(u) {
+      return (u.email && u.email.toLowerCase() === emailKey) ||
+             (empKey && u.employeeId && u.employeeId.toLowerCase() === empKey);
+    });
+
+    var record = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      employeeId: user.employeeId,
+      role: user.role,
+      station: user.station || "JFK",
+      password: rawPass
+    };
+
+    if (existingIdx !== -1) {
+      users[existingIdx] = Object.assign(users[existingIdx], record);
+    } else {
+      users.push(record);
+    }
+    localStorage.setItem("flightfix_registered_users", JSON.stringify(users));
+  } catch (e) {}
+}
+
+
     // ==============================================================================
     // 1. TAB CONTROLLER (SIGN IN VS REGISTER)
     // ==============================================================================
@@ -50,47 +94,51 @@
     // ==============================================================================
     // 2. HANDLE SIGN IN
     // ==============================================================================
-    async function handleFormLogin(event) {
+        async function handleFormLogin(event) {
       if (event && event.preventDefault) event.preventDefault();
 
       var emailEl = getEl("login-email") || getEl("auth-email");
       var passEl = getEl("login-password") || getEl("auth-pass");
 
-      var email = emailEl ? emailEl.value.trim() : "";
+      var ident = emailEl ? emailEl.value.trim() : "";
       var pass = passEl ? passEl.value.trim() : "";
 
-      if (!email || !pass) {
-        return notify("Please enter both email/ID and password.");
+      if (!ident || !pass) {
+        return notify("Please enter both registered email/Employee ID and password.");
       }
 
       try {
         var res = await fetch("/api/auth/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: email, password: pass })
+          body: JSON.stringify({ identifier: ident, email: ident, employeeId: ident, password: pass })
         });
         var data = await res.json();
 
-        if (data.success && data.user) {
+        if (res.ok && data.success && data.user) {
+          saveLocalRegisteredUser(data.user, pass);
           applyPrivateSession(data.user);
         } else {
-          notify(data.error || "Login failed. Invalid credentials.");
+          notify(data.error || "Login failed. Incorrect registered email/Employee ID or password.");
+          return;
         }
       } catch (err) {
-        // Offline / direct storage fallback for entered credentials
-        var inferredRole = (email.toLowerCase().includes("admin")) ? "admin" : "user";
-        var localUser = {
-          name: email.split("@")[0],
-          email: email,
-          role: inferredRole
-        };
-        applyPrivateSession(localUser);
+        // Offline / storage fallback: strictly verify credentials from persistent registry
+        var localUsers = getLocalRegisteredUsers();
+        var matched = localUsers.find(function(u) {
+          var matchId = (u.email && u.email.toLowerCase() === ident.toLowerCase()) ||
+                        (u.employeeId && u.employeeId.toLowerCase() === ident.toLowerCase());
+          return matchId && (u.password === pass);
+        });
+
+        if (matched) {
+          applyPrivateSession(matched);
+        } else {
+          notify("Login failed. No registered account found with that email/ID and password.");
+        }
       }
     }
 
-    // ==============================================================================
-    // 3. HANDLE REGISTRATION (With Distinct Role)
-    // ==============================================================================
     async function handleFormRegister(event) {
       if (event && event.preventDefault) event.preventDefault();
 
@@ -111,6 +159,9 @@
       if (!name || !email || !empid || !pass) {
         return notify("Please fill in all required registration fields.");
       }
+      if (pass.length < 6) {
+        return notify("Password must be at least 6 characters long for privacy and integrity.");
+      }
 
       var payload = {
         name: name,
@@ -129,27 +180,46 @@
         });
         var data = await res.json();
 
-        if (data.success && data.user) {
-          notify("Registration successful! Welcome, " + name);
+        if (res.ok && data.success && data.user) {
+          notify("Registration successful! Welcome, " + (data.user.name || name));
+          saveLocalRegisteredUser(data.user, pass);
           applyPrivateSession(data.user);
         } else {
-          notify(data.message || "Account registered! Signing you in...");
-          applyPrivateSession(payload);
+          // Strictly reject duplicate registration and notify user
+          notify(data.error || data.message || "Registration failed. That email or Employee ID is already registered.");
+          return;
         }
       } catch (err) {
-        notify("Account registered locally!");
-        applyPrivateSession(payload);
+        // Offline registration fallback with strict duplicate verification
+        var localRegistry = getLocalRegisteredUsers();
+        var duplicate = localRegistry.find(function(u) {
+          return (u.email && u.email.toLowerCase() === email.toLowerCase()) ||
+                 (u.employeeId && u.employeeId.toLowerCase() === empid.toLowerCase());
+        });
+
+        if (duplicate) {
+          return notify("Registration failed: That email or Employee ID is already registered. Duplicate IDs are prohibited.");
+        }
+
+        var newUser = {
+          name: name,
+          email: email,
+          employeeId: empid,
+          role: (role === "admin" ? "Company Admin" : "Field Technician"),
+          station: station || "JFK"
+        };
+        saveLocalRegisteredUser(newUser, pass);
+        notify("Account registered and securely saved! Welcome, " + name);
+        applyPrivateSession(newUser);
       }
     }
 
-    // ==============================================================================
-    // 4. PRIVATE SESSION BINDING & DASHBOARD REDIRECTION
-    // ==============================================================================
     function applyPrivateSession(user) {
       if (!user) return;
 
-      // Strict role normalization: Only 'admin' or 'user'
-      var role = (user.role && user.role.toLowerCase().includes("admin")) ? "admin" : "user";
+      // Role normalization using centralized isUserAdmin
+      var isAdmin = (typeof isUserAdmin === "function") ? isUserAdmin(user) : (user.role && user.role.toLowerCase().includes("admin"));
+      var role = isAdmin ? "admin" : "user";
       user.role = role;
 
       try {
@@ -182,7 +252,13 @@
       try {
         localStorage.removeItem("flightfix_current_user");
         localStorage.removeItem("flightfix_user");
+        localStorage.removeItem("flightfix_token");
       } catch (e) {}
+
+      if (window.Auth) {
+        window.Auth.user = null;
+        window.Auth.token = null;
+      }
 
       updateNavSessionUI(null);
       notify("You have safely logged out.");
@@ -194,7 +270,7 @@
       switchAuthTab("login");
 
       if (typeof window.showView === "function") {
-        window.showView("login");
+        window.showView("home");
       }
     }
 
@@ -202,12 +278,23 @@
     // 6. NAVBAR UI SYNCHRONIZATION
     // ==============================================================================
     function updateNavSessionUI(user) {
+      var loggedIn = !!(user && (user.role || user.email || user.employeeId));
+      var isAdmin = loggedIn && ((typeof isUserAdmin === "function") ? isUserAdmin(user) : !!(user && user.role && user.role.toLowerCase().includes("admin")));
+
+      document.body.classList.toggle("not-logged-in", !loggedIn);
+      document.body.classList.toggle("logged-in", loggedIn);
+      document.body.classList.toggle("role-admin", isAdmin);
+      document.body.classList.toggle("role-technician", loggedIn && !isAdmin);
+      document.body.classList.toggle("role-user", loggedIn && !isAdmin);
+
       var nameEl = getEl("nav-user-name");
       var badgeEl = getEl("nav-role-badge");
       var loginBtn = getEl("nav-login-btn");
       var logoutBtn = getEl("nav-logout-btn");
+      var dashBtn = getEl("nav-dash");
 
-      if (!user || !user.role) {
+      // Strictly hide all protected buttons when not logged in
+      if (!loggedIn) {
         if (nameEl) nameEl.textContent = "Guest";
         if (badgeEl) {
           badgeEl.textContent = "Not Logged In";
@@ -215,15 +302,34 @@
         }
         if (loginBtn) loginBtn.style.display = "inline-block";
         if (logoutBtn) logoutBtn.style.display = "none";
+        if (dashBtn) dashBtn.style.display = "none";
+
+        var allProtected = document.querySelectorAll(".nav-auth-only, #nav-dash, #nav-plan, #nav-inv, #nav-erp, #nav-tech, #nav-reset");
+        allProtected.forEach(function(b) {
+          b.style.display = "none";
+        });
         return;
       }
 
+      // Logged in user navigation configuration
       if (nameEl) nameEl.textContent = user.name || user.email;
       if (loginBtn) loginBtn.style.display = "none";
       if (logoutBtn) logoutBtn.style.display = "inline-block";
 
+      // Dashboard button: accessible to both roles, clearly titled
+      if (dashBtn) {
+        dashBtn.style.display = "inline-block";
+        dashBtn.textContent = isAdmin ? "Dashboard" : "🛠️ My Assigned Tasks";
+      }
+
+      // Admin-only buttons: strictly shown ONLY for Company Admin
+      var adminOnlyButtons = document.querySelectorAll(".nav-admin-only, #nav-plan, #nav-inv, #nav-erp, #nav-tech, #nav-reset");
+      adminOnlyButtons.forEach(function(b) {
+        b.style.display = isAdmin ? "inline-block" : "none";
+      });
+
       if (badgeEl) {
-        if (user.role === "admin") {
+        if (isAdmin) {
           badgeEl.textContent = "🏢 Company Admin";
           badgeEl.className = "role-badge role-admin";
         } else {
@@ -236,9 +342,7 @@
     // View Renderer fallback
     function rLogin() {
       var user = getStoredUser();
-      if (user && user.role) {
-        updateNavSessionUI(user);
-      }
+      updateNavSessionUI(user);
     }
     var renderLogin = rLogin;
 

@@ -6,6 +6,21 @@ function rPlan() {
   var planEl = $("plan");
   if (!planEl) return;
 
+  var loggedIn = (typeof isUserLoggedIn === "function") ? isUserLoggedIn() : false;
+  var user = (typeof getStoredUser === "function") ? getStoredUser() : null;
+  var isAdmin = loggedIn && ((typeof isUserAdmin === "function") ? isUserAdmin(user) : !!(user && user.role && user.role.toLowerCase().includes("admin")));
+
+  if (!loggedIn) {
+    planEl.style.display = "none";
+    if (typeof go === "function") go("login");
+    return;
+  }
+  if (!isAdmin) {
+    planEl.style.display = "none";
+    if (typeof go === "function") go("dash");
+    return;
+  }
+
   // Build clean options for aircraft
   var aircraftList = (S && S.ac && S.ac.length) ? S.ac : [];
   var acOpts = opts(aircraftList, function(a) {

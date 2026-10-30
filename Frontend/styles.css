@@ -388,9 +388,7 @@
           font-weight: 700;
           padding: 4px 10px;
           border-radius: 6px;
-          background: rgba(16, 185, 129, 0.12);
-          border: 1px solid rgba(16, 185, 129, 0.35);
-          color: #10b981;
+          background: #04140e; border: 1px solid #0d3b2a; color: #86efac;
         }
 
         .footer-heading {
@@ -611,9 +609,9 @@
           font-weight: 600;
         }
 
-        .ok { background: #1a9d5a22; color: var(--ok); }
+        .ok { background: #04140e; color: #86efac; border: 1px solid #0d3b2a; }
         .wn { background: #d98a0022; color: var(--wn); }
-        .er { background: #d6364a22; color: var(--er); }
+        .er { background: #180709; color: #fca5a5; border: 1px solid #3d1215; }
         .in { background: #1f6feb22; color: var(--ac); }
 
         .scroll {
@@ -663,6 +661,28 @@
           background: 0;
           color: var(--ac);
           border: 1px solid var(--ac);
+        }
+
+        .btn.red {
+          background: #2c0d10;
+          color: #fca5a5;
+          border: 1px solid #5c181a;
+        }
+
+        .btn.red:hover {
+          background: #3d1217;
+          color: #fecaca;
+        }
+
+        .btn.ok {
+          background: #061c14;
+          color: #86efac;
+          border: 1px solid #114232;
+        }
+
+        .btn.ok:hover {
+          background: #0d2d22;
+          color: #a7f3d0;
         }
 
         .btn.blue {
@@ -1031,20 +1051,14 @@
           border-radius: 4px;
         }
 
-        .pill-ok {
-          background: rgba(16, 185, 129, 0.12);
-          color: #34d399;
-        }
+        .pill-ok { background: #04140e; color: #86efac; border: 1px solid #0d3b2a; }
 
         .pill-warn {
           background: rgba(245, 158, 11, 0.12);
           color: #fbbf24;
         }
 
-        .pill-err {
-          background: rgba(239, 68, 68, 0.12);
-          color: #f87171;
-        }
+        .pill-err { background: #180709; color: #fca5a5; border: 1px solid #3d1215; }
 
         .pill-neutral {
           background: rgba(156, 163, 175, 0.12);
@@ -1194,11 +1208,7 @@
           color: #fbbf24;
         }
 
-        .btn-clear {
-          background: rgba(239, 68, 68, 0.15);
-          color: #f87171;
-          border-color: #7f1d1d;
-        }
+        .btn-clear { background: #180709; color: #fca5a5; border: 1px solid #3d1215; }
 
         .btn-clear:hover {
           background: #dc2626;
@@ -1397,17 +1407,9 @@
           gap: 4px;
         }
 
-        .role-admin {
-          background: rgba(239, 68, 68, 0.16);
-          color: #f87171;
-          border: 1px solid rgba(239, 68, 68, 0.35);
-        }
+        .role-admin { background: #180709; color: #fca5a5; border: 1px solid #3d1215; }
 
-        .role-user {
-          background: rgba(16, 185, 129, 0.16);
-          color: #34d399;
-          border: 1px solid rgba(16, 185, 129, 0.35);
-        }
+        .role-user { background: #04140e; color: #86efac; border: 1px solid #0d3b2a; }
 
         .role-guest {
           background: rgba(100, 116, 139, 0.16);
@@ -1621,17 +1623,9 @@
           text-transform: uppercase;
         }
 
-        .admin-pill {
-          background: rgba(239, 68, 68, 0.16);
-          color: #f87171;
-          border: 1px solid rgba(239, 68, 68, 0.35);
-        }
+        .admin-pill { background: #180709; color: #fca5a5; border: 1px solid #3d1215; }
 
-        .user-pill {
-          background: rgba(16, 185, 129, 0.16);
-          color: #34d399;
-          border: 1px solid rgba(16, 185, 129, 0.35);
-        }
+        .user-pill { background: #04140e; color: #86efac; border: 1px solid #0d3b2a; }
 
         .btn-switch-role {
           background: #1e293b;
@@ -1687,3 +1681,53 @@
         .po-item-card:hover {
           border-color: #334155;
         }
+
+
+/* ==========================================================================
+   AUTHENTICATION VISIBILITY GUARDS (Strict Hide Before Login)
+   ========================================================================== */
+body.not-logged-in .nav-auth-only,
+body.not-logged-in #nav-dash,
+body.not-logged-in #nav-plan,
+body.not-logged-in #nav-inv,
+body.not-logged-in #nav-erp,
+body.not-logged-in #nav-tech,
+body.not-logged-in #nav-reset,
+body.not-logged-in #nav-logout-btn,
+body.not-logged-in #dash,
+body.not-logged-in #plan,
+body.not-logged-in #inv,
+body.not-logged-in #erp,
+body.not-logged-in #tech {
+  display: none !important;
+}
+
+body.logged-in #nav-login-btn {
+  display: none !important;
+}
+
+/* ==========================================================================
+   ADMIN-ONLY NAVIGATION & VIEWS (Strictly hidden from Field Technicians & Guests)
+   ========================================================================== */
+body.role-technician .nav-admin-only,
+body.role-technician #nav-plan,
+body.role-technician #nav-inv,
+body.role-technician #nav-erp,
+body.role-technician #nav-tech,
+body.role-technician #nav-reset,
+body.role-technician #plan,
+body.role-technician #inv,
+body.role-technician #erp,
+body.role-technician #tech,
+body.role-user .nav-admin-only,
+body.role-user #nav-plan,
+body.role-user #nav-inv,
+body.role-user #nav-erp,
+body.role-user #nav-tech,
+body.role-user #nav-reset,
+body.role-user #plan,
+body.role-user #inv,
+body.role-user #erp,
+body.role-user #tech {
+  display: none !important;
+}

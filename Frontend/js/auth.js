@@ -22,10 +22,10 @@ var AUTH_API = ((window.location.protocol.startsWith('http') && window.location.
           }
         }
 
-        if (this.token) {
+        if (this.token && this.user) {
           this.verifySession();
         } else {
-          this.setDefaultEmployee();
+          this.user = null;
         }
 
         this.renderUserBadge();
@@ -383,7 +383,10 @@ var AUTH_API = ((window.location.protocol.startsWith('http') && window.location.
         this.user = null;
         localStorage.removeItem('flightfix_token');
         localStorage.removeItem('flightfix_user');
-        this.setDefaultEmployee();
+        localStorage.removeItem('flightfix_current_user');
+        if (typeof updateNavSessionUI === "function") {
+          updateNavSessionUI(null);
+        }
         this.renderUserBadge();
         if (typeof toast === 'function') {
           toast("Employee signed out.");

@@ -2,6 +2,21 @@ function rErp() {
       var erpEl = $("erp");
       if (!erpEl) return;
 
+      var loggedIn = (typeof isUserLoggedIn === "function") ? isUserLoggedIn() : false;
+      var user = (typeof getStoredUser === "function") ? getStoredUser() : null;
+      var isAdmin = loggedIn && ((typeof isUserAdmin === "function") ? isUserAdmin(user) : !!(user && user.role && user.role.toLowerCase().includes("admin")));
+
+      if (!loggedIn) {
+        erpEl.style.display = "none";
+        if (typeof go === "function") go("login");
+        return;
+      }
+      if (!isAdmin) {
+        erpEl.style.display = "none";
+        if (typeof go === "function") go("dash");
+        return;
+      }
+
       var poRows = "";
       if (!S.po.length) {
         poRows = "<tr>" +

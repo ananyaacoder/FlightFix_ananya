@@ -1,135 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>FlightFix — Orbital Fleet MRO Platform</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="not-logged-in">
 
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-      <title>FlightFix — Orbital Fleet MRO Platform</title>
-      <link rel="stylesheet" href="styles.css">
-    </head>
-    <body>
+  <!-- TOP NAVIGATION BAR -->
+  <header>
+    <div class="logo">
+      <div class="logo-icon">✈</div>
+      <div>
+        <div class="logo-title">FLIGHT<span>FIX</span></div>
+      </div>
+    </div>
 
-      <!-- TOP NAVIGATION BAR -->
-      <header>
-        <div class="logo">
-          <div class="logo-icon">✈</div>
-          <div>
-            <div class="logo-title">FLIGHT<span>FIX</span></div>
+    <!-- Active User & Role Display (Strict: No Role Switching Allowed) -->
+    <div class="session-badge-container">
+      <span id="nav-user-name">Guest</span>
+      <span id="nav-role-badge" class="role-badge role-guest">Not Logged In</span>
+    </div>
+
+    <nav id="nav">
+      <!-- Public Buttons: Always visible -->
+      <button id="nav-home" onclick="showView('home')">Home</button>
+
+      <!-- Protected Buttons: Strictly hidden before login -->
+      <button id="nav-dash" class="nav-auth-only" onclick="showView('dash')" style="display: none;">Dashboard</button>
+      <button id="nav-plan" class="nav-auth-only nav-admin-only" onclick="showView('plan')" style="display: none;">Plan</button>
+      <button id="nav-inv" class="nav-auth-only nav-admin-only" onclick="showView('inv')" style="display: none;">Inventory</button>
+      <button id="nav-erp" class="nav-auth-only nav-admin-only" onclick="showView('erp')" style="display: none;">ERP</button>
+      <button id="nav-tech" class="nav-auth-only nav-admin-only" onclick="showView('tech')" style="display: none;">Tech</button>
+
+      <!-- Login & Logout Dynamic Buttons -->
+      <button id="nav-login-btn" class="btn-auth-nav" onclick="showView('login')">Login / Sign Up</button>
+      <button id="nav-logout-btn" class="btn-logout-nav" onclick="logoutUser()" style="display: none;">Logout</button>
+
+      <!-- Maintenance Reset (Protected - Admin only) -->
+      <button id="nav-reset" class="btn red nav-auth-only nav-admin-only" onclick="resetAll()" style="display: none;">Reset demo data</button>
+    </nav>
+  </header>
+
+  <!-- VIEW CONTAINERS -->
+  <!-- Public Views -->
+  <section id="home" class="view on"></section>
+
+  <!-- Protected Views: Strictly hidden before login -->
+  <section id="dash" class="view" style="display: none;"></section>
+  <section id="plan" class="view" style="display: none;"></section>
+  <section id="inv" class="view" style="display: none;"></section>
+  <section id="erp" class="view" style="display: none;"></section>
+  <section id="tech" class="view" style="display: none;"></section>
+
+  <!-- AUTH / PRIVATE DUAL-ROLE REGISTRATION & LOGIN VIEW -->
+  <section id="login" class="view" style="display: none;">
+    <div class="auth-container">
+      <div class="auth-tabs">
+        <button id="tab-login" class="auth-tab-btn active" onclick="switchAuthTab('login')">Sign In</button>
+        <button id="tab-register" class="auth-tab-btn" onclick="switchAuthTab('register')">Register New Account</button>
+      </div>
+
+      <!-- 1. PRIVATE SIGN IN FORM -->
+      <div id="form-login-block">
+        <form onsubmit="handleFormLogin(event)">
+          <div class="auth-form-group">
+            <label for="login-email">Official Work Email or Employee ID</label>
+            <input type="text" id="login-email" placeholder="Enter your registered email address" required autocomplete="username">
           </div>
-        </div>
+          <div class="auth-form-group">
+            <label for="login-password">Password</label>
+            <input type="password" id="login-password" placeholder="Enter your password" required autocomplete="current-password">
+          </div>
+          <button type="submit" class="auth-submit-btn">Sign In to Private Portal</button>
+        </form>
+      </div>
 
-        <!-- Active User & Role Display (Strict: No Role Switching Allowed) -->
-        <div class="session-badge-container">
-          <span id="nav-user-name">Guest</span>
-          <span id="nav-role-badge" class="role-badge role-guest">Not Logged In</span>
-        </div>
-
-        <nav id="nav">
-          <button onclick="showView('home')">Home</button>
-          <button onclick="showView('dash')">Dashboard</button>
-          <button id="nav-plan" onclick="showView('plan')">Plan</button>
-          <button id="nav-inv" onclick="showView('inv')">Inventory</button>
-          <button id="nav-erp" onclick="showView('erp')">ERP</button>
-          <button id="nav-tech" onclick="showView('tech')">Tech</button>
-
-          <!-- Login & Logout Dynamic Buttons -->
-          <button id="nav-login-btn" class="btn-auth-nav" onclick="showView('login')">Login / Sign Up</button>
-          <button id="nav-logout-btn" class="btn-logout-nav" onclick="logoutUser()" style="display: none;">Logout</button>
-
-          <button class="btn red" onclick="resetAll()">Reset demo data</button>
-        </nav>
-      </header>
-
-      <!-- VIEW CONTAINERS -->
-      <section id="home" class="view on"></section>
-      <section id="dash" class="view"></section>
-      <section id="plan" class="view"></section>
-      <section id="inv" class="view"></section>
-      <section id="erp" class="view"></section>
-      <section id="tech" class="view"></section>
-
-      <!-- AUTH / PRIVATE DUAL-ROLE REGISTRATION & LOGIN VIEW -->
-      <section id="login" class="view">
-        <div class="auth-container">
-          <div class="auth-tabs">
-            <button id="tab-login" class="auth-tab-btn active" onclick="switchAuthTab('login')">Sign In</button>
-            <button id="tab-register" class="auth-tab-btn" onclick="switchAuthTab('register')">Register New Account</button>
+      <!-- 2. REGISTRATION FORM WITH DISTINCT ROLE SELECTION -->
+      <div id="form-register-block" style="display: none;">
+        <form onsubmit="handleFormRegister(event)">
+          <div class="auth-form-group">
+            <label for="reg-name">Full Name</label>
+            <input type="text" id="reg-name" placeholder="Enter your full name" required autocomplete="name">
+          </div>
+          <div class="auth-form-group">
+            <label for="reg-email">Official Work Email</label>
+            <input type="email" id="reg-email" placeholder="Enter your work email address" required autocomplete="email">
+          </div>
+          <div class="auth-form-group">
+            <label for="reg-empid">Employee / License ID</label>
+            <input type="text" id="reg-empid" placeholder="e.g. EMP-501 or AME-3049" required>
           </div>
 
-          <!-- 1. PRIVATE SIGN IN FORM -->
-          <div id="form-login-block">
-            <form onsubmit="handleFormLogin(event)">
-              <div class="auth-form-group">
-                <label for="login-email">Official Work Email or Employee ID</label>
-                <input type="text" id="login-email" placeholder="Enter your registered email address" required autocomplete="username">
-              </div>
-              <div class="auth-form-group">
-                <label for="login-password">Password</label>
-                <input type="password" id="login-password" placeholder="Enter your password" required autocomplete="current-password">
-              </div>
-              <button type="submit" class="auth-submit-btn">Sign In to Private Portal</button>
-            </form>
+          <!-- Distinct Role Selection -->
+          <div class="auth-form-group">
+            <label for="reg-role">Account Type & Dashboard Access:</label>
+            <select id="reg-role" required>
+              <option value="user" selected>🛠️ Field Technician / AME (Maintenance Workbench Only)</option>
+              <option value="admin">🏢 Company Admin (Fleet Management, Approvals, ERP Only)</option>
+            </select>
           </div>
 
-          <!-- 2. REGISTRATION FORM WITH DISTINCT ROLE SELECTION -->
-          <div id="form-register-block" style="display: none;">
-            <form onsubmit="handleFormRegister(event)">
-              <div class="auth-form-group">
-                <label for="reg-name">Full Name</label>
-                <input type="text" id="reg-name" placeholder="Enter your full name" required autocomplete="name">
-              </div>
-              <div class="auth-form-group">
-                <label for="reg-email">Official Work Email</label>
-                <input type="email" id="reg-email" placeholder="Enter your work email address" required autocomplete="email">
-              </div>
-              <div class="auth-form-group">
-                <label for="reg-empid">Employee / License ID</label>
-                <input type="text" id="reg-empid" placeholder="e.g. EMP-501 or AME-3049" required>
-              </div>
-
-              <!-- Distinct Role Selection -->
-              <div class="auth-form-group">
-                <label for="reg-role">Account Type & Dashboard Access:</label>
-                <select id="reg-role" required>
-                  <option value="user" selected>🛠️ Field Technician / AME (Maintenance Workbench Only)</option>
-                  <option value="admin">🏢 Company Admin (Fleet Management, Approvals, ERP Only)</option>
-                </select>
-              </div>
-
-              <div class="auth-form-group">
-                <label for="reg-station">Assigned Station / Hub</label>
-                <input type="text" id="reg-station" placeholder="e.g. JFK, LHR, DXB, or SIN" required>
-              </div>
-              <div class="auth-form-group">
-                <label for="reg-password">Create Password</label>
-                <input type="password" id="reg-password" placeholder="Create a secure password" required autocomplete="new-password">
-              </div>
-              <button type="submit" class="auth-submit-btn register-btn">Create Private Account & Launch</button>
-            </form>
+          <div class="auth-form-group">
+            <label for="reg-station">Assigned Station / Hub</label>
+            <input type="text" id="reg-station" placeholder="e.g. JFK, LHR, DXB, or SIN" required>
           </div>
-        </div>
-      </section>
+          <div class="auth-form-group">
+            <label for="reg-password">Create Password</label>
+            <input type="password" id="reg-password" placeholder="Create a secure password" required autocomplete="new-password">
+          </div>
+          <button type="submit" class="auth-submit-btn register-btn">Create Private Account & Launch</button>
+        </form>
+      </div>
+    </div>
+  </section>
 
-      <!-- Core Scripts -->
-      <script src="js/state.js"></script>
-      <script src="js/api.js"></script>
-      <script src="js/auth.js"></script>
-      <script src="js/utils.js"></script>
+  <!-- Core Scripts -->
+  <script src="js/state.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/utils.js"></script>
 
-      <!-- View Scripts (Must be loaded before app.js) -->
-      <script src="js/views/home.js"></script>
-      <script src="js/views/dashboard.js"></script>
-      <script src="js/views/workorders.js"></script>
-      <script src="js/views/inventory.js"></script>
-      <script src="js/views/erp.js"></script>
-      <script src="js/views/technician.js"></script>
-      <script src="js/views/login.js"></script>
+  <!-- View Scripts (Must be loaded before app.js) -->
+  <script src="js/views/home.js"></script>
+  <script src="js/views/dashboard.js"></script>
+  <script src="js/views/workorders.js"></script>
+  <script src="js/views/inventory.js"></script>
+  <script src="js/views/erp.js"></script>
+  <script src="js/views/technician.js"></script>
+  <script src="js/views/login.js"></script>
 
-      <!-- Main Controller (Must be LAST) -->
-      <script src="js/app.js"></script>
+  <!-- Main Controller (Must be LAST) -->
+  <script src="js/app.js"></script>
 
-      <!-- Notification Toast Container -->
-      <div id="toast"></div>
+  <!-- Notification Toast Container -->
+  <div id="toast"></div>
 
-    </body>
-    </html>
+</body>
+</html>
