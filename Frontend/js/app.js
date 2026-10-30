@@ -51,18 +51,18 @@ function go(tab) {
   // Authentication Route Guard
   if (!loggedIn && PUBLIC_TABS.indexOf(tab) === -1) {
     if (typeof notify === "function") {
-      notify("🔒 Access Restricted: Please sign in to access FlightFix MRO portals.");
+      notify("Access Restricted: Please sign in to access FlightFix MRO portals.");
     } else if (typeof toast === "function") {
-      toast("🔒 Access Restricted: Please sign in to access FlightFix MRO portals.");
+      toast("Access Restricted: Please sign in to access FlightFix MRO portals.");
     }
     tab = "login";
   }
   // Role-Based Route Guard: Prevent technicians from accessing admin-only pages
   else if (loggedIn && !isAdmin && ADMIN_ONLY_TABS.indexOf(tab) !== -1) {
     if (typeof notify === "function") {
-      notify("🚫 Access Restricted: Only Company Admins can manage Planning, Spares & ERP.");
+      notify("Access Restricted: Only Company Admins can manage Planning, Spares & ERP.");
     } else if (typeof toast === "function") {
-      toast("🚫 Access Restricted: Only Company Admins can manage Planning, Spares & ERP.");
+      toast("Access Restricted: Only Company Admins can manage Planning, Spares & ERP.");
     }
     tab = "dash";
   }
@@ -117,7 +117,7 @@ function render() {
   document.body.classList.toggle("role-technician", loggedIn && !isAdmin);
   document.body.classList.toggle("role-user", loggedIn && !isAdmin);
 
-  document.querySelectorAll("section").forEach(
+  document.querySelectorAll("body > section.view").forEach(
     function(s) {
       var isTarget = (s.id === S.tab || s.id === "view-" + S.tab);
       // Strictly prevent protected views from rendering when unauthenticated
@@ -173,10 +173,16 @@ setInterval(function() {
   }
 }, 1000);
 
+// Clean up any legacy localStorage session leak so other tabs/windows start fresh
+try {
+  localStorage.removeItem("flightfix_current_user");
+  localStorage.removeItem("flightfix_user");
+} catch(e) {}
+
 // Initial boot
 var loggedInBoot = (typeof isUserLoggedIn === "function") ? isUserLoggedIn() : false;
 if (!S) S = {};
-if (!S.tab || (!loggedInBoot && PUBLIC_TABS.indexOf(S.tab) === -1)) {
-  S.tab = "home";
-}
+// Starting condition: if not logged in on this side, ALWAYS default strictly to front page 'home'
+// Always make 'home' the default starting page on initial load
+S.tab = 'home';
 render();

@@ -529,7 +529,7 @@ function updateGlobeRouteList() {
   ];
   container.innerHTML = routes.map(r => `
     <div style="display:flex; justify-content:space-between; align-items:center; padding:5px 8px; background:rgba(15,23,42,0.6); border-radius:6px; font-size:11px;">
-      <div><strong style="color:#38bdf8;">${r.flightNo}</strong> ${r.origin || r.from} ➔ ${r.dest || r.to}</div>
+      <div><strong style="color:#38bdf8;">${r.flightNo}</strong> ${r.origin || r.from} &rarr; ${r.dest || r.to}</div>
       <button onclick="toggleRouteStatus('${r.id}')" style="background:${r.active !== false ? '#10b98133' : '#64748b33'}; color:${r.active !== false ? '#10b981' : '#94a3b8'}; border:none; border-radius:4px; font-size:9px; padding:2px 6px; cursor:pointer;">${r.active !== false ? 'ACTIVE' : 'OFF'}</button>
     </div>
   `).join('');
@@ -1432,10 +1432,10 @@ function updatePartDrawer(part) {
         <span style="font-size:10px; font-weight:700; background:#0284c7; color:#fff; padding:2px 6px; border-radius:4px;">${part.ata}</span>
         <h3 style="margin:4px 0 2px 0; font-size:15px; color:#f8fafc;">${part.title}</h3>
       </div>
-      <button onclick="closePartDrawer()" style="background:none; border:none; color:#64748b; font-size:18px; cursor:pointer;">✕</button>
+      <button onclick="closePartDrawer()" style="background:none; border:none; color:#64748b; font-size:18px; cursor:pointer;">&times;</button>
     </div>
     <div style="padding:6px 10px; background:rgba(16,185,129,0.12); border:1px solid rgba(16,185,129,0.3); border-radius:6px; margin-bottom:10px; font-size:11px; color:#10b981; font-weight:700;">
-      ● ${part.health}
+      ${part.health}
     </div>
     <div style="font-size:12px; color:#cbd5e1; line-height:1.4; margin-bottom:12px;">${part.desc}</div>
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:12px;">

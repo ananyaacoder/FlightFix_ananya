@@ -132,15 +132,15 @@ function rPlan() {
     var woIdRaw = w.id;
     var startBtn = "";
     if (st === "open") {
-      startBtn = "<button class='btn sm' style='margin-right:6px;' onclick='startWo(\"" + woIdRaw + "\")' title='Allocate parts and begin maintenance'>▶ Start</button>";
+      startBtn = "<button class='btn sm' style='margin-right:6px;' onclick='startWo(\"" + woIdRaw + "\")' title='Allocate parts and begin maintenance'>Start</button>";
     }
 
     var mobBtn = "";
     if (st === "progress" || st === "in_progress") {
-      mobBtn = "<button class='btn sm sec' style='margin-right:6px;' onclick='openOnMobile(\"" + woIdRaw + "\")' title='Open in Technician mobile workbench'>📱 Tech View</button>";
+      mobBtn = "<button class='btn sm sec' style='margin-right:6px;' onclick='openOnMobile(\"" + woIdRaw + "\")' title='Open in Technician mobile workbench'>Tech View</button>";
     }
 
-    var delBtn = "<button class='btn sm red' onclick='delWo(\"" + woIdRaw + "\")' title='Cancel work order'>✕</button>";
+    var delBtn = "<button class='btn sm red' onclick='delWo(\"" + woIdRaw + "\")' title='Cancel work order'>&times;</button>";
 
     var woIdDisplay = String(w.id).startsWith("wo_") ? w.id : "#" + w.id;
     var acDisplay = w.a || w.aircraft || "VT-FLB";
@@ -165,7 +165,7 @@ function rPlan() {
     "<div class='card' style='margin-bottom:20px;'>" +
       "<div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;'>" +
         "<div>" +
-          "<h3 style='margin:0;font-size:18px;'>✈️ Schedule Maintenance Work Order</h3>" +
+          "<h3 style='margin:0;font-size:18px;'>Schedule Maintenance Work Order</h3>" +
           "<small style='color:var(--mu,#94a3b8);'>Dispatch airframes to hangar bays, schedule inspections, and allocate components</small>" +
         "</div>" +
       "</div>" +
@@ -204,7 +204,7 @@ function rPlan() {
     "</div>" +
 
     "<div class='card' style='margin-bottom:20px;'>" +
-      "<h3 style='margin:0 0 12px 0;font-size:16px;'>📅 Weekly Hangar Bay Schedule (Mon – Fri)</h3>" +
+      "<h3 style='margin:0 0 12px 0;font-size:16px;'>Weekly Hangar Bay Schedule (Mon – Fri)</h3>" +
       "<div class='scroll' style='overflow-x:auto;'>" +
         "<table class='gantt' style='width:100%;border-collapse:collapse;'>" +
           "<thead><tr style='background:rgba(255,255,255,0.04);'>" +
@@ -220,7 +220,7 @@ function rPlan() {
 
     "<div class='card'>" +
       "<div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;'>" +
-        "<h3 style='margin:0;font-size:16px;'>📋 Active & Completed Work Orders</h3>" +
+        "<h3 style='margin:0;font-size:16px;'>Active & Completed Work Orders</h3>" +
         "<span style='font-size:12px;color:var(--mu);'>" + orders.length + " total records</span>" +
       "</div>" +
       "<div class='scroll' style='overflow-x:auto;'>" +

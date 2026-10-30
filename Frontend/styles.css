@@ -1686,6 +1686,7 @@
 /* ==========================================================================
    AUTHENTICATION VISIBILITY GUARDS (Strict Hide Before Login)
    ========================================================================== */
+body.not-logged-in .session-badge-container,
 body.not-logged-in .nav-auth-only,
 body.not-logged-in #nav-dash,
 body.not-logged-in #nav-plan,
@@ -1704,6 +1705,10 @@ body.not-logged-in #tech {
 
 body.logged-in #nav-login-btn {
   display: none !important;
+}
+
+body.logged-in .session-badge-container {
+  display: inline-flex !important;
 }
 
 /* ==========================================================================

@@ -1,9 +1,6 @@
 (function () {
   "use strict";
 
-  // ============================================================================
-  // 1. API CONFIGURATION & HELPERS
-  // ============================================================================
   var API_BASE = (window.location.origin && window.location.origin.startsWith("http"))
     ? window.location.origin
     : "http://127.0.0.1:8000";
@@ -25,9 +22,6 @@
     }
   }
 
-  // ============================================================================
-  // 2. STATE SEED SAFEGUARD (Guarantees data is never empty)
-  // ============================================================================
   function ensureState() {
     if (!window.S) window.S = {};
     var s = window.S;
@@ -138,9 +132,6 @@
     }
   }
 
-  // ============================================================================
-  // 3. UNIFIED WORK ORDER NORMALIZER
-  // ============================================================================
   function normalizeWo(w) {
     var id = String(w.id || w.wo_id || "");
     var reg = w.r || w.a || w.aircraft || "VT-FLB";
@@ -210,15 +201,12 @@
     };
   }
 
-  // ============================================================================
-  // 4. CURRENT USER RESOLVER
-  // ============================================================================
   function getCurrentUser() {
     if (typeof window.getStoredUser === "function") {
       return window.getStoredUser();
     }
     try {
-      var raw = localStorage.getItem("flightfix_current_user") || localStorage.getItem("flightfix_user");
+      var raw = sessionStorage.getItem("flightfix_current_user") || sessionStorage.getItem("flightfix_user");
       if (raw && raw !== "undefined" && raw !== "null") {
         var u = JSON.parse(raw);
         if (u && (u.role || u.email || u.employeeId)) return u;
@@ -227,9 +215,6 @@
     return null;
   }
 
-  // ============================================================================
-  // 5. MAIN ROUTER
-  // ============================================================================
   function rDash() {
     var dashEl = getEl("dash");
     if (!dashEl) return;
@@ -259,9 +244,6 @@
     }
   }
 
-  // ============================================================================
-  // 6. COMPANY ADMIN DASHBOARD
-  // ============================================================================
   function renderAdminDashboard(dashEl, user) {
     var s = window.S;
     var acList = s.ac || [];
@@ -281,28 +263,27 @@
       "<div style='background:#1e293b;padding:16px 20px;border-radius:10px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;border:1px solid #334155;flex-wrap:wrap;gap:12px;'>",
         "<div>",
           "<div style='display:flex;align-items:center;gap:10px;margin-bottom:4px;'>",
-            "<span style='font-size:22px;'>🏢</span>",
+            "<span class='tag' style='font-size:11px;background:#1e293b;color:#94a3b8;'>ADMIN</span>",
             "<h2 style='margin:0;color:#f8fafc;font-size:20px;font-weight:700;'>Company Admin Fleet Control</h2>",
             "<span style='background:#180709;color:#fca5a5;border:1px solid #3d1215;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;'>COMPANY ADMIN</span>",
           "</div>",
           "<div style='color:#94a3b8;font-size:13px;'>Logged in as: <strong>" + (user.name || user.email) + "</strong> | Full fleet oversight, hangar scheduling, task allotment & ERP sign-off.</div>",
         "</div>",
         "<div style='display:flex;gap:8px;'>",
-          "<button onclick='go(\"plan\")' style='background:#0f172a;color:#38bdf8;border:1px solid #0284c7;padding:7px 14px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:600;'>📅 Hangar Plan</button>",
-          "<button onclick='go(\"inv\")' style='background:#0f172a;color:#10b981;border:1px solid #059669;padding:7px 14px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:600;'>📦 Spares Inventory</button>",
-          "<button onclick='go(\"erp\")' style='background:#0f172a;color:#f59e0b;border:1px solid #d97706;padding:7px 14px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:600;'>💼 ERP & Orders</button>",
+          "<button onclick='go(\"plan\")' style='background:#0f172a;color:#38bdf8;border:1px solid #0284c7;padding:7px 14px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:600;'>Hangar Plan</button>",
+          "<button onclick='go(\"inv\")' style='background:#0f172a;color:#10b981;border:1px solid #059669;padding:7px 14px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:600;'>Spares Inventory</button>",
+          "<button onclick='go(\"erp\")' style='background:#0f172a;color:#f59e0b;border:1px solid #d97706;padding:7px 14px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:600;'>ERP & Orders</button>",
         "</div>",
       "</div>"
     );
 
-    // KPI Summary Cards
     htmlParts.push(
       "<div style='display:grid;grid-template-columns:repeat(auto-fit, minmax(210px, 1fr));gap:16px;margin-bottom:24px;'>",
         "<div style='background:#0f172a;border:1px solid #1e293b;border-radius:8px;padding:16px;'>",
           "<div style='color:#94a3b8;font-size:12px;text-transform:uppercase;font-weight:600;'>Fleet Availability</div>",
           "<div style='color:#38bdf8;font-size:28px;font-weight:700;margin:6px 0;'>" + pct + "</div>",
           "<div style='font-size:12px;color:" + (aogList.length > 0 ? "#f87171" : "#4ade80") + ";font-weight:600;'>",
-            (aogList.length > 0 ? "⚠️ " + aogList.length + " Grounded (AOG)" : "✓ 100% Airworthy"),
+            (aogList.length > 0 ? "" + aogList.length + " Grounded (AOG)" : "100% Airworthy"),
           "</div>",
         "</div>",
 
@@ -326,12 +307,11 @@
       "</div>"
     );
 
-    // Admin Grounded (AOG) vs Serviceable Status Banner (Dark Red / Dark Green)
     if (aogList.length > 0) {
       htmlParts.push(
         "<div style='background:#150507;border:1px solid #380f12;border-radius:8px;padding:14px 18px;margin-bottom:24px;'>",
           "<div style='display:flex;align-items:center;gap:10px;margin-bottom:6px;'>",
-            "<span style='font-size:18px;'>🚨</span>",
+            "<span class='tag err' style='font-size:10px;'>AOG</span>",
             "<h3 style='margin:0;color:#fca5a5;font-size:15px;font-weight:700;'>FLEET ALERT: AIRCRAFT GROUNDED (AOG)</h3>",
           "</div>",
           "<p style='color:#fecaca;font-size:13px;margin:0 0 10px 0;'>The following commercial aircraft are currently grounded (AOG) and restricted from flight operations:</p>",
@@ -339,7 +319,7 @@
             aogList.map(function (a) {
               var reg = a.r || a.reg;
               var model = a.m || a.model || "Commercial Flight";
-              return "<div style='background:#20080a;border:1px solid #4a1317;color:#fca5a5;padding:6px 12px;border-radius:6px;font-size:12px;font-weight:600;'>✈️ " + reg + " (" + model + ")</div>";
+              return "<div style='background:#20080a;border:1px solid #4a1317;color:#fca5a5;padding:6px 12px;border-radius:6px;font-size:12px;font-weight:600;'>" + reg + " (" + model + ")</div>";
             }).join("") +
           "</div>",
         "</div>"
@@ -347,17 +327,16 @@
     } else {
       htmlParts.push(
         "<div style='background:#04120d;border:1px solid #0b2e21;border-radius:8px;padding:12px 16px;margin-bottom:24px;color:#86efac;font-size:13px;display:flex;align-items:center;gap:8px;'>",
-          "<span>✓</span> All assigned commercial aircraft are serviceable. Fleet airworthiness is at 100%.",
+          "All assigned commercial aircraft are serviceable. Fleet airworthiness is at 100%.",
         "</div>"
       );
     }
 
-    // Section 1: Allot Work Order to Technician (Admin Task Giver)
     htmlParts.push(
       "<div style='background:#0f172a;border:1px solid #1e293b;border-radius:8px;padding:20px;margin-bottom:24px;'>",
         "<div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;'>",
           "<div>",
-            "<h3 style='margin:0 0 4px 0;color:#f8fafc;font-size:16px;'>⚡ Assign Maintenance Task to Field Technician</h3>",
+            "<h3 style='margin:0 0 4px 0;color:#f8fafc;font-size:16px;'>Assign Maintenance Task to Field Technician</h3>",
             "<p style='margin:0;color:#94a3b8;font-size:13px;'>Dispatch inspections and maintenance directly to technicians. Tasks instantly reflect on their workbench.</p>",
           "</div>",
         "</div>",
@@ -404,7 +383,7 @@
             "</select>",
           "</div>",
           "<div>",
-            "<button type='submit' style='width:100%;background:#2563eb;color:#fff;border:none;padding:10px;border-radius:6px;font-weight:600;font-size:13px;cursor:pointer;'>Assign Task ⚡</button>",
+            "<button type='submit' style='width:100%;background:#2563eb;color:#fff;border:none;padding:10px;border-radius:6px;font-weight:600;font-size:13px;cursor:pointer;'>Assign Task</button>",
           "</div>",
         "</form>",
       "</div>"
@@ -414,7 +393,7 @@
     htmlParts.push(
       "<div style='background:#0f172a;border:1px solid #1e293b;border-radius:8px;padding:20px;margin-bottom:24px;'>",
         "<div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;'>",
-          "<h3 style='margin:0;color:#f8fafc;font-size:16px;'>✈️ Fleet Airworthiness & Operational Status</h3>",
+          "<h3 style='margin:0;color:#f8fafc;font-size:16px;'>Fleet Airworthiness & Operational Status</h3>",
           "<span style='color:#94a3b8;font-size:12px;'>One-click Ground / Release toggle</span>",
         "</div>",
         "<div style='overflow-x:auto;'>",
@@ -447,8 +426,8 @@
           "<td style='padding:10px 8px;color:#94a3b8;'>" + hours + " hrs</td>",
           "<td style='padding:10px 8px;'>",
             (isAog
-              ? "<span style='background:#180709;color:#fca5a5;border:1px solid #3d1215;padding:3px 8px;border-radius:4px;font-weight:600;font-size:11px;'>⚠️ GROUNDED (AOG)</span>"
-              : "<span style='background:#04140e;color:#86efac;border:1px solid #0d3b2a;padding:3px 8px;border-radius:4px;font-weight:600;font-size:11px;'>✓ SERVICEABLE</span>"),
+              ? "<span style='background:#180709;color:#fca5a5;border:1px solid #3d1215;padding:3px 8px;border-radius:4px;font-weight:600;font-size:11px;'>GROUNDED (AOG)</span>"
+              : "<span style='background:#04140e;color:#86efac;border:1px solid #0d3b2a;padding:3px 8px;border-radius:4px;font-weight:600;font-size:11px;'>SERVICEABLE</span>"),
           "</td>",
           "<td style='padding:10px 8px;text-align:right;'>",
             "<button onclick='window.toggleFlightAog(\"" + reg + "\")' style='background:" + (isAog ? "#052419" : "#2d0b0f") + ";border:1px solid " + (isAog ? "#0c422f" : "#4a1317") + ";color:" + (isAog ? "#86efac" : "#fca5a5") + ";padding:5px 12px;border-radius:4px;font-size:12px;cursor:pointer;font-weight:600;'>",
@@ -470,7 +449,7 @@
     htmlParts.push(
       "<div style='background:#0f172a;border:1px solid #1e293b;border-radius:8px;padding:20px;margin-bottom:24px;'>",
         "<div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;'>",
-          "<h3 style='margin:0;color:#f8fafc;font-size:16px;'>📋 Fleet Maintenance Work Orders Overview</h3>",
+          "<h3 style='margin:0;color:#f8fafc;font-size:16px;'>Fleet Maintenance Work Orders Overview</h3>",
           "<span style='color:#94a3b8;font-size:12px;'>" + woList.length + " total records</span>",
         "</div>",
         "<div style='overflow-x:auto;'>",
@@ -499,11 +478,11 @@
           "<td style='padding:10px 8px;font-weight:700;color:#38bdf8;'>" + w.reg + "</td>",
           "<td style='padding:10px 8px;color:#e2e8f0;'>" + w.title + "</td>",
           "<td style='padding:10px 8px;color:#94a3b8;'>" + w.bay + "</td>",
-          "<td style='padding:10px 8px;color:#cbd5e1;'>👤 " + w.tech + "</td>",
+          "<td style='padding:10px 8px;color:#cbd5e1;'>" + w.tech + "</td>",
           "<td style='padding:10px 8px;color:#94a3b8;'>" + w.doneCount + "/" + w.totalCount + " (" + w.pct + "%)</td>",
           "<td style='padding:10px 8px;'>",
             (isDone
-              ? "<span style='background:#04140e;color:#86efac;border:1px solid #0d3b2a;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:600;'>✓ DONE</span>"
+              ? "<span style='background:#04140e;color:#86efac;border:1px solid #0d3b2a;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:600;'>DONE</span>"
               : "<span style='background:#1e3a8a;color:#93c5fd;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:600;'>IN PROGRESS</span>"),
           "</td>",
         "</tr>"
@@ -522,13 +501,13 @@
       "<div style='background:#0f172a;border:1px solid #1e293b;border-radius:8px;padding:20px;'>",
         "<div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;'>",
           "<div>",
-            "<h3 style='margin:0 0 4px 0;color:#f8fafc;font-size:16px;'>📦 ERP Spares & Procurement Sign-Off</h3>",
+            "<h3 style='margin:0 0 4px 0;color:#f8fafc;font-size:16px;'>ERP Spares & Procurement Sign-Off</h3>",
             "<p style='margin:0;color:#94a3b8;font-size:13px;'>Only Company Admins can order and sign off parts from suppliers. Approved parts replenish stock for technicians.</p>",
           "</div>",
-          "<button onclick='go(\"erp\")' style='background:#334155;color:#e2e8f0;border:none;padding:6px 12px;border-radius:6px;font-size:12px;cursor:pointer;'>Go to ERP Portal ➔</button>",
+          "<button onclick='go(\"erp\")' style='background:#334155;color:#e2e8f0;border:none;padding:6px 12px;border-radius:6px;font-size:12px;cursor:pointer;'>Go to ERP Portal &rarr;</button>",
         "</div>",
         (pendingPos.length === 0
-          ? "<p style='color:#4ade80;font-size:13px;margin:0;'>✓ All pending purchase orders have been signed off. Spares stock is up to date.</p>"
+          ? "<p style='color:#4ade80;font-size:13px;margin:0;'>All pending purchase orders have been signed off. Spares stock is up to date.</p>"
           : "<div style='display:grid;gap:10px;'>" +
               pendingPos.map(function (po) {
                 var pId = po.id;
@@ -544,7 +523,7 @@
                       "<div style='font-size:12px;color:#94a3b8;'>Supplier: " + vendor + " | Total: $" + cost + "</div>" +
                     "</div>" +
                     "<div style='display:flex;gap:8px;'>" +
-                      "<button onclick='window.approvePo(\"" + pId + "\")' style='background:#052419;border:1px solid #0c422f;color:#86efac;padding:6px 14px;border-radius:4px;cursor:pointer;font-size:12px;font-weight:600;'>Approve Order ✓</button>" +
+                      "<button onclick='window.approvePo(\"" + pId + "\")' style='background:#052419;border:1px solid #0c422f;color:#86efac;padding:6px 14px;border-radius:4px;cursor:pointer;font-size:12px;font-weight:600;'>Approve Order</button>" +
                       "<button onclick='window.rejectPo(\"" + pId + "\")' style='background:#2d0b0f;border:1px solid #4a1317;color:#fca5a5;padding:6px 12px;border-radius:4px;cursor:pointer;font-size:12px;font-weight:600;'>Reject</button>" +
                     "</div>" +
                   "</div>"
@@ -579,15 +558,15 @@
       "<div style='background:#1e293b;padding:16px 20px;border-radius:10px;margin-bottom:20px;border:1px solid #334155;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;'>",
         "<div>",
           "<div style='display:flex;align-items:center;gap:10px;margin-bottom:4px;'>",
-            "<span style='font-size:22px;'>👋</span>",
+            "<span class='tag' style='font-size:11px;background:#1e293b;color:#94a3b8;'>CREW</span>",
             "<h2 style='margin:0;color:#f8fafc;font-size:20px;font-weight:700;'>Welcome back, " + (user.name || "Technician") + "!</h2>",
             "<span style='background:#04140e;color:#86efac;border:1px solid #0d3b2a;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;'>FIELD TECHNICIAN</span>",
           "</div>",
           "<div style='color:#94a3b8;font-size:13px;'>Station: <strong>" + (user.station || "JFK Hub") + "</strong> | Here are the maintenance tasks assigned to you by Dispatch & Company Admin.</div>",
         "</div>",
         "<div style='display:flex;gap:12px;align-items:center;'>",
-          "<span style='background:#0f172a;color:#38bdf8;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;border:1px solid #1e293b;'>📋 Active Tasks: " + openTasks.length + "</span>",
-          "<span style='background:#0f172a;color:#4ade80;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;border:1px solid #1e293b;'>✓ Completed: " + doneTasks.length + "</span>",
+          "<span style='background:#0f172a;color:#38bdf8;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;border:1px solid #1e293b;'>Active Tasks: " + openTasks.length + "</span>",
+          "<span style='background:#0f172a;color:#4ade80;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;border:1px solid #1e293b;'>Completed: " + doneTasks.length + "</span>",
         "</div>",
       "</div>"
     );
@@ -597,7 +576,7 @@
       htmlParts.push(
         "<div style='background:#150507;border:1px solid #380f12;border-radius:8px;padding:16px;margin-bottom:24px;'>",
           "<div style='display:flex;align-items:center;gap:10px;margin-bottom:6px;'>",
-            "<span style='font-size:20px;'>🚨</span>",
+            "<span class='tag err' style='font-size:10px;'>AOG</span>",
             "<h3 style='margin:0;color:#fca5a5;font-size:15px;font-weight:700;'>AIRCRAFT GROUNDED (AOG) REQUIRING ATTENTION</h3>",
           "</div>",
           "<p style='color:#fecaca;font-size:13px;margin:0 0 10px 0;'>The following aircraft are held on ground until assigned maintenance tasks are completed and certified:</p>",
@@ -609,7 +588,7 @@
         var model = a.m || a.model || "Commercial Flight";
         htmlParts.push(
           "<div style='background:#20080a;border:1px solid #4a1317;color:#fca5a5;padding:6px 12px;border-radius:6px;font-size:12px;font-weight:600;'>",
-            "✈️ " + reg + " (" + model + ")",
+            "" + reg + " (" + model + ")",
           "</div>"
         );
       });
@@ -618,7 +597,7 @@
     } else {
       htmlParts.push(
         "<div style='background:#04120d;border:1px solid #0b2e21;border-radius:8px;padding:12px 16px;margin-bottom:24px;color:#86efac;font-size:13px;display:flex;align-items:center;gap:8px;'>",
-          "<span>✓</span> All assigned commercial aircraft are serviceable.",
+          "All assigned commercial aircraft are serviceable.",
         "</div>"
       );
     }
@@ -628,7 +607,7 @@
       "<div style='margin-bottom:28px;'>",
         "<div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;'>",
           "<div>",
-            "<h3 style='margin:0 0 2px 0;color:#f8fafc;font-size:17px;'>🛠️ Assigned Maintenance Tasks</h3>",
+            "<h3 style='margin:0 0 2px 0;color:#f8fafc;font-size:17px;'>Assigned Maintenance Tasks</h3>",
             "<small style='color:#94a3b8;'>Check off each inspection step below. Click 'Mark Complete' when all steps are verified.</small>",
           "</div>",
           "<span style='color:#94a3b8;font-size:12px;'>" + openTasks.length + " pending</span>",
@@ -638,7 +617,7 @@
     if (openTasks.length === 0) {
       htmlParts.push(
         "<div style='background:#0f172a;border:1px solid #1e293b;border-radius:8px;padding:28px;text-align:center;'>",
-          "<div style='font-size:36px;margin-bottom:8px;'>🎉</div>",
+          "<div style='font-size:13px;font-weight:700;color:#10b981;margin-bottom:8px;'>ALL CAUGHT UP</div>",
           "<h4 style='margin:0 0 6px 0;color:#f8fafc;font-size:16px;'>All Tasks Completed!</h4>",
           "<p style='color:#94a3b8;font-size:13px;margin:0;'>You have no pending maintenance orders right now. Check back once Company Admin dispatches new work.</p>",
         "</div>"
@@ -663,7 +642,7 @@
 
               // Aircraft & Task Title
               "<div style='margin-bottom:6px;'>",
-                "<span style='color:#38bdf8;font-weight:700;font-size:16px;'>✈️ " + w.reg + "</span>",
+                "<span style='color:#38bdf8;font-weight:700;font-size:16px;'>" + w.reg + "</span>",
               "</div>",
               "<h4 style='margin:0 0 6px 0;color:#f8fafc;font-size:15px;font-weight:600;line-height:1.3;'>" + w.title + "</h4>",
               "<div style='color:#64748b;font-size:12px;margin-bottom:12px;'>Assigned by Admin · " + w.day + "</div>",
@@ -700,10 +679,10 @@
             // Card Bottom Action Button
             "<div style='border-top:1px solid #1e293b;padding-top:14px;display:flex;justify-content:space-between;align-items:center;'>",
               "<div>",
-                "<span style='color:#fbbf24;font-size:12px;'>⏳ In Progress</span>",
+                "<span style='color:#fbbf24;font-size:12px;'>In Progress</span>",
               "</div>",
               "<button onclick='window.completeWorkOrder(\"" + w.id + "\")' style='background:#052419;border:1px solid #0c422f;color:#86efac;padding:9px 18px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 2px 6px rgba(6,78,59,0.4);'>",
-                "Mark Complete ✓",
+                "Mark Complete",
               "</button>",
             "</div>",
           "</div>"
@@ -719,7 +698,7 @@
       htmlParts.push(
         "<div style='background:#0f172a;border:1px solid #1e293b;border-radius:8px;padding:20px;margin-bottom:28px;'>",
           "<div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;'>",
-            "<h3 style='margin:0;color:#f8fafc;font-size:16px;'>✓ Completed & Certified Tasks</h3>",
+            "<h3 style='margin:0;color:#f8fafc;font-size:16px;'>Completed & Certified Tasks</h3>",
             "<span style='color:#94a3b8;font-size:12px;'>" + doneTasks.length + " signed off</span>",
           "</div>",
           "<div style='display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:12px;'>"
@@ -729,11 +708,11 @@
         htmlParts.push(
           "<div style='background:#1e293b;padding:12px 14px;border-radius:6px;display:flex;justify-content:space-between;align-items:center;'>",
             "<div>",
-              "<div style='font-weight:700;color:#38bdf8;font-size:13px;'>✈️ " + w.reg + " <span style='font-family:monospace;color:#a5b4fc;font-size:11px;'>#" + w.id + "</span></div>",
+              "<div style='font-weight:700;color:#38bdf8;font-size:13px;'>" + w.reg + " <span style='font-family:monospace;color:#a5b4fc;font-size:11px;'>#" + w.id + "</span></div>",
               "<div style='font-size:12px;color:#e2e8f0;margin-top:2px;'>" + w.title + "</div>",
               "<div style='font-size:11px;color:#94a3b8;margin-top:2px;'>Signed by " + w.tech + "</div>",
             "</div>",
-            "<span style='background:#04140e;color:#86efac;border:1px solid #0d3b2a;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:600;'>CERTIFIED ✓</span>",
+            "<span style='background:#04140e;color:#86efac;border:1px solid #0d3b2a;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:600;'>CERTIFIED</span>",
           "</div>"
         );
       });
@@ -744,7 +723,7 @@
     // Section: Report Defect on the Tarmac (Simple Squawk Box)
     htmlParts.push(
       "<div style='background:#0f172a;border:1px solid #1e293b;border-radius:8px;padding:20px;'>",
-        "<h3 style='margin:0 0 6px 0;color:#f8fafc;font-size:16px;'>📝 Report Defect / Ground Aircraft (Squawk)</h3>",
+        "<h3 style='margin:0 0 6px 0;color:#f8fafc;font-size:16px;'>Report Defect / Ground Aircraft (Squawk)</h3>",
         "<p style='color:#94a3b8;font-size:13px;margin:0 0 16px 0;'>Found a problem during turnaround or walkaround inspection? Submit a report to inform Company Admin and ground aircraft if required.</p>",
         "<form onsubmit='window.reportSquawk(event)' style='display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:14px;align-items:end;'>",
           "<div>",
@@ -765,11 +744,11 @@
             "<label style='display:block;font-size:12px;color:#94a3b8;margin-bottom:4px;'>Urgency Level</label>",
             "<select id='squawk-aog' style='width:100%;padding:8px 10px;background:#1e293b;color:#f8fafc;border:1px solid #334155;border-radius:6px;'>",
               "<option value='0'>Routine defect (Non-critical)</option>",
-              "<option value='1'>🚨 Critical defect — Ground immediately (AOG)</option>",
+              "<option value='1'>Critical defect — Ground immediately (AOG)</option>",
             "</select>",
           "</div>",
           "<div>",
-            "<button type='submit' style='width:100%;background:#2d0b0f;border:1px solid #4a1317;color:#fca5a5;padding:10px;border-radius:6px;font-weight:600;font-size:13px;cursor:pointer;'>Log Defect Report 🚨</button>",
+            "<button type='submit' style='width:100%;background:#2d0b0f;border:1px solid #4a1317;color:#fca5a5;padding:10px;border-radius:6px;font-weight:600;font-size:13px;cursor:pointer;'>Log Defect Report</button>",
           "</div>",
         "</form>",
       "</div>"
@@ -911,7 +890,7 @@
       })
     }).catch(function(e) {});
 
-    notify("✓ Task " + newId + " assigned to " + tech + " on " + ac);
+    notify("Task " + newId + " assigned to " + tech + " on " + ac);
     rDash();
   };
 
@@ -988,7 +967,7 @@
         body: JSON.stringify({ signoffNotes: "Task completed and certified by Field Technician." })
       }).catch(function(e) {});
 
-      notify("✓ Task #" + woId + " marked as COMPLETED & certified!");
+      notify("Task #" + woId + " marked as COMPLETED & certified!");
       rDash();
     }
   };
@@ -1044,9 +1023,9 @@
         plane.aog = 1;
         plane.status = "aog";
       }
-      notify("🚨 URGENT: " + ac + " has been GROUNDED (AOG) and defect reported!");
+      notify("URGENT: " + ac + " has been GROUNDED (AOG) and defect reported!");
     } else {
-      notify("✓ Defect report submitted for " + ac + " (" + newId + ")");
+      notify("Defect report submitted for " + ac + " (" + newId + ")");
     }
 
     if (typeof window.save === "function") window.save();
@@ -1083,7 +1062,7 @@
         method: 'POST'
       }).catch(function(e) {});
 
-      notify("✓ Purchase Order " + poId + " approved for procurement");
+      notify("Purchase Order " + poId + " approved for procurement");
       rDash();
     }
   };

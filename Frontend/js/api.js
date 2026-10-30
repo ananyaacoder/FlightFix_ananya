@@ -15,11 +15,11 @@ const API = {
       const data = await res.json();
       if (data.success && data.state) {
         window.S = { ...window.S, ...data.state };
-        console.log('✅ Synchronized state with FlightFix Backend!');
+        console.log('[FlightFix] Synchronized state with Backend.');
         return true;
       }
     } catch (e) {
-      console.warn('⚠️ Backend not reachable. Operating in local mode.');
+      console.warn('[FlightFix] Backend not reachable. Operating in local mode.');
     }
     return false;
   },

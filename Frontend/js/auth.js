@@ -8,10 +8,10 @@ var AUTH_API = ((window.location.protocol.startsWith('http') && window.location.
       activeTab: 'login',
 
       init: function() {
-        this.token = localStorage.getItem(
+        this.token = sessionStorage.getItem(
           'flightfix_token'
         );
-        var saved = localStorage.getItem(
+        var saved = sessionStorage.getItem(
           'flightfix_user'
         );
         if (saved) {
@@ -55,7 +55,7 @@ var AUTH_API = ((window.location.protocol.startsWith('http') && window.location.
         .then(function(data) {
           if (data.success && data.user) {
             self.user = data.user;
-            localStorage.setItem(
+            sessionStorage.setItem(
               'flightfix_user',
               JSON.stringify(self.user)
             );
@@ -133,7 +133,7 @@ var AUTH_API = ((window.location.protocol.startsWith('http') && window.location.
               "style='position:absolute;top:12px;" +
               "right:12px;background:none;border:none;" +
               "color:#94a3b8;font-size:18px;" +
-              "cursor:pointer;'>✕</button>" +
+              "cursor:pointer;'>&times;</button>" +
 
               "<div style='text-align:center;" +
               "margin-bottom:14px;'>" +
@@ -285,7 +285,7 @@ var AUTH_API = ((window.location.protocol.startsWith('http') && window.location.
             self.token = data.token;
             self.user = data.user;
             localStorage.setItem('flightfix_token', self.token);
-            localStorage.setItem(
+            sessionStorage.setItem(
               'flightfix_user',
               JSON.stringify(self.user)
             );
@@ -381,6 +381,9 @@ var AUTH_API = ((window.location.protocol.startsWith('http') && window.location.
       logout: function() {
         this.token = null;
         this.user = null;
+        sessionStorage.removeItem('flightfix_token');
+        sessionStorage.removeItem('flightfix_user');
+        sessionStorage.removeItem('flightfix_current_user');
         localStorage.removeItem('flightfix_token');
         localStorage.removeItem('flightfix_user');
         localStorage.removeItem('flightfix_current_user');

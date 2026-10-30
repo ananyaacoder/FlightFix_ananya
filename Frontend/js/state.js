@@ -51,6 +51,7 @@ var S;
 try { S = JSON.parse(localStorage.getItem(KEY)); } catch(e){}
 if (!S || !S.ac || !S.parts) S = seed();
 if (!S.routes) S.routes = seed().routes; // Seamless upgrade
+S.tab = "home";
 
 function save() {
   try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){}

@@ -9,7 +9,7 @@ def serve_frontend_index(request):
     index_path = os.path.join(settings.FRONTEND_DIR, 'index.html')
     if os.path.exists(index_path):
         return FileResponse(open(index_path, 'rb'), content_type='text/html')
-    return HttpResponse("✈️ FlightFix MRO Django Backend Operational. API is available at /api/")
+    return HttpResponse("FlightFix MRO Django Backend Operational. API is available at /api/")
 
 urlpatterns = [
     path('admin/', admin.site.urls),

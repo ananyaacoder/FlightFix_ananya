@@ -39,7 +39,7 @@ function rTech() {
   if (!activeWo) {
     techEl.innerHTML =
       "<div class='phone' style='text-align:center;padding:40px 20px;'>" +
-        "<div style='font-size:42px;margin-bottom:12px;'>🛠️</div>" +
+        "<div style='font-size:13px;letter-spacing:1px;color:var(--mu);margin-bottom:12px;font-weight:700;'>[NO ACTIVE ORDERS]</div>" +
         "<h3 style='margin:0 0 8px 0;font-size:18px;'>No Active Work Orders</h3>" +
         "<p style='color:var(--mu,#94a3b8);font-size:13px;line-height:1.5;margin-bottom:20px;'>" +
           "There are currently no maintenance orders assigned to the hangar bay. Visit the planning deck to create and start a work order." +
@@ -101,7 +101,7 @@ function rTech() {
     var isDone = (t[1] === 1);
     var cls = isDone ? "job done" : "job";
     var chk = isDone ? "checked" : "";
-    var iconBadge = isDone ? "<span style='color:#10b981;font-size:12px;font-weight:700;'>✓</span>" : "<span style='color:var(--mu);font-size:12px;'>○</span>";
+    var iconBadge = isDone ? "<span style='color:#10b981;font-size:12px;font-weight:700;'>&check;</span>" : "<span style='color:var(--mu);font-size:12px;'>-</span>";
 
     return "<div class='" + cls + "' style='display:flex;align-items:center;padding:10px 12px;margin-bottom:8px;border-radius:8px;background:rgba(255,255,255,0.03);cursor:pointer;' onclick='toggleJob(\"" + activeWo.id + "\"," + idx + ")'>" +
       "<input type='checkbox' " + chk + " style='margin-right:10px;cursor:pointer;width:18px;height:18px;' onclick='event.stopPropagation(); toggleJob(\"" + activeWo.id + "\"," + idx + ");'> " +
@@ -120,10 +120,10 @@ function rTech() {
   var signBtnDis = "disabled style='width:100%;padding:12px;border-radius:8px;font-weight:700;opacity:0.6;cursor:not-allowed;'";
 
   if (isDone) {
-    signBtnText = "✅ Certified Airworthy & Released";
+    signBtnText = "Certified Airworthy & Released";
     signBtnDis = "disabled style='width:100%;padding:12px;border-radius:8px;background:#10b98122;color:#6ee7b7;border:1px solid #10b981;font-weight:700;cursor:default;'";
   } else if (allDone) {
-    signBtnText = "✍️ Sign Off & Release to Service";
+    signBtnText = "Sign Off & Release to Service";
     signBtnDis = "style='width:100%;padding:12px;border-radius:8px;background:#10b981;color:#fff;border:none;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(16,185,129,0.4);'";
   }
 
@@ -139,7 +139,7 @@ function rTech() {
       "<!-- Tablet Header -->" +
       "<div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;border-bottom:1px solid rgba(255,255,255,0.08);padding-bottom:10px;'>" +
         "<div style='display:flex;align-items:center;gap:8px;'>" +
-          "<span style='font-size:18px;'>🛠️</span>" +
+          "<span class='tag in' style='font-size:10px;padding:2px 6px;'>TERMINAL</span>" +
           "<div>" +
             "<b style='font-size:14px;letter-spacing:0.5px;'>FIELD WORKBENCH</b><br>" +
             "<small style='font-size:11px;color:#38bdf8;'>Handheld Maintenance Terminal</small>" +
@@ -168,8 +168,8 @@ function rTech() {
           "</div>" +
         "</div>" +
         "<div style='display:flex;justify-content:space-between;margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.06);font-size:11px;color:var(--mu,#94a3b8);'>" +
-          "<span>📍 " + bayDisplay + " (" + dayDisplay + ")</span>" +
-          "<span>👤 " + techDisplay + "</span>" +
+          "<span>Bay: " + bayDisplay + " (" + dayDisplay + ")</span>" +
+          "<span>Tech: " + techDisplay + "</span>" +
         "</div>" +
       "</div>" +
 
@@ -275,7 +275,7 @@ function signOff(woId) {
   note("Technician", "Airworthiness release: " + acReg + " signed off by Lead Tech");
   save();
   render();
-  toast("🎉 " + acReg + " certified airworthy! Work Order #" + woId + " closed.");
+  toast(acReg + " certified airworthy! Work Order #" + woId + " closed.");
 
   // Sync to Django Backend
   fetch('/api/workorders/' + woId + '/signoff', {

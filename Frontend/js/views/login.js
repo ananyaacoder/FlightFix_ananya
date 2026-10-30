@@ -6,7 +6,7 @@
     // Safe session reader (prevents crashes from corrupt localStorage data)
     function getStoredUser() {
       try {
-        var raw = localStorage.getItem("flightfix_current_user") || localStorage.getItem("flightfix_user");
+        var raw = sessionStorage.getItem("flightfix_current_user") || sessionStorage.getItem("flightfix_user");
         if (!raw || raw === "undefined" || raw === "null") return null;
         return JSON.parse(raw);
       } catch (e) {
@@ -223,8 +223,10 @@ function saveLocalRegisteredUser(user, rawPass) {
       user.role = role;
 
       try {
-        localStorage.setItem("flightfix_current_user", JSON.stringify(user));
-        localStorage.setItem("flightfix_user", JSON.stringify(user));
+        sessionStorage.setItem("flightfix_current_user", JSON.stringify(user));
+        sessionStorage.setItem("flightfix_user", JSON.stringify(user));
+        localStorage.removeItem("flightfix_current_user");
+        localStorage.removeItem("flightfix_user");
       } catch (e) {}
 
       updateNavSessionUI(user);
@@ -250,6 +252,10 @@ function saveLocalRegisteredUser(user, rawPass) {
     // ==============================================================================
     function logoutUser() {
       try {
+        sessionStorage.setItem("flightfix_current_user", "");
+        sessionStorage.removeItem("flightfix_current_user");
+        sessionStorage.removeItem("flightfix_user");
+        sessionStorage.removeItem("flightfix_token");
         localStorage.removeItem("flightfix_current_user");
         localStorage.removeItem("flightfix_user");
         localStorage.removeItem("flightfix_token");
@@ -293,12 +299,15 @@ function saveLocalRegisteredUser(user, rawPass) {
       var logoutBtn = getEl("nav-logout-btn");
       var dashBtn = getEl("nav-dash");
 
-      // Strictly hide all protected buttons when not logged in
+      var badgeContainer = document.querySelector(".session-badge-container");
+
+      // Strictly hide all protected buttons & ID badges when not logged in
       if (!loggedIn) {
-        if (nameEl) nameEl.textContent = "Guest";
+        if (badgeContainer) badgeContainer.style.display = "none";
+        if (nameEl) nameEl.textContent = "";
         if (badgeEl) {
-          badgeEl.textContent = "Not Logged In";
-          badgeEl.className = "role-badge role-guest";
+          badgeEl.textContent = "";
+          badgeEl.className = "role-badge";
         }
         if (loginBtn) loginBtn.style.display = "inline-block";
         if (logoutBtn) logoutBtn.style.display = "none";
@@ -311,15 +320,16 @@ function saveLocalRegisteredUser(user, rawPass) {
         return;
       }
 
-      // Logged in user navigation configuration
-      if (nameEl) nameEl.textContent = user.name || user.email;
+      // Logged in user navigation configuration (only on this logged-in session side)
+      if (badgeContainer) badgeContainer.style.display = "inline-flex";
+      if (nameEl) nameEl.textContent = user.name || user.email || user.employeeId;
       if (loginBtn) loginBtn.style.display = "none";
       if (logoutBtn) logoutBtn.style.display = "inline-block";
 
       // Dashboard button: accessible to both roles, clearly titled
       if (dashBtn) {
         dashBtn.style.display = "inline-block";
-        dashBtn.textContent = isAdmin ? "Dashboard" : "🛠️ My Assigned Tasks";
+        dashBtn.textContent = isAdmin ? "Dashboard" : "My Assigned Tasks";
       }
 
       // Admin-only buttons: strictly shown ONLY for Company Admin
@@ -330,10 +340,10 @@ function saveLocalRegisteredUser(user, rawPass) {
 
       if (badgeEl) {
         if (isAdmin) {
-          badgeEl.textContent = "🏢 Company Admin";
+          badgeEl.textContent = "Company Admin";
           badgeEl.className = "role-badge role-admin";
         } else {
-          badgeEl.textContent = "🛠️ Field Technician";
+          badgeEl.textContent = "Field Technician";
           badgeEl.className = "role-badge role-user";
         }
       }

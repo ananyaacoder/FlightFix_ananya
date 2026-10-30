@@ -83,7 +83,7 @@ function po(partId, qty, why) {
 /* Centralized Session & Authentication Status */
 function getStoredUser() {
   try {
-    var raw = localStorage.getItem("flightfix_current_user") || localStorage.getItem("flightfix_user");
+    var raw = sessionStorage.getItem("flightfix_current_user") || sessionStorage.getItem("flightfix_user");
     if (!raw || raw === "undefined" || raw === "null") return null;
     var u = JSON.parse(raw);
     if (u && (u.role || u.email || u.employeeId)) return u;
