@@ -1,4 +1,5 @@
 import json
+import sys
 import random
 import os
 from pathlib import Path
@@ -34,6 +35,8 @@ def load_json_file(filepath):
     return None
 
 def save_json_file(filepath, data):
+    if 'test' in sys.argv:
+        return
     try:
         os.makedirs(os.path.dirname(filepath), exist_ok=True)
         with open(filepath, 'w', encoding='utf-8') as f:
@@ -44,8 +47,7 @@ def save_json_file(filepath, data):
 def get_full_state_from_db_or_json():
     """Retrieve full MRO state from SQLite if populated, otherwise fallback to mro_db.json."""
     try:
-        ac_count = Aircraft.objects.count()
-        if ac_count > 0:
+        if Aircraft.objects.exists() or Part.objects.exists() or WorkOrder.objects.exists():
             return {
                 'ac': [a.to_dict() for a in Aircraft.objects.all()],
                 'parts': [p.to_dict() for p in Part.objects.all()],

@@ -75,13 +75,25 @@ function saveLocalRegisteredUser(user, rawPass) {
       if (tab === "register") {
         if (loginBlock) loginBlock.style.display = "none";
         if (regBlock) regBlock.style.display = "block";
-        if (tabLogin) tabLogin.classList.remove("active");
-        if (tabReg) tabReg.classList.add("active");
+        if (tabLogin) {
+          tabLogin.classList.remove("active");
+          tabLogin.setAttribute("aria-selected", "false");
+        }
+        if (tabReg) {
+          tabReg.classList.add("active");
+          tabReg.setAttribute("aria-selected", "true");
+        }
       } else {
         if (loginBlock) loginBlock.style.display = "block";
         if (regBlock) regBlock.style.display = "none";
-        if (tabLogin) tabLogin.classList.add("active");
-        if (tabReg) tabReg.classList.remove("active");
+        if (tabLogin) {
+          tabLogin.classList.add("active");
+          tabLogin.setAttribute("aria-selected", "true");
+        }
+        if (tabReg) {
+          tabReg.classList.remove("active");
+          tabReg.setAttribute("aria-selected", "false");
+        }
       }
     }
 

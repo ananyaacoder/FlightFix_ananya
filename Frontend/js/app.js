@@ -85,6 +85,11 @@ function renderNav() {
       var oc = b.getAttribute("onclick") || "";
       var isOn = oc.indexOf("'" + S.tab + "'") > -1;
       b.classList.toggle("on", isOn);
+      if (isOn) {
+        b.setAttribute("aria-current", "page");
+      } else {
+        b.removeAttribute("aria-current");
+      }
     });
   }
 }
@@ -111,7 +116,7 @@ function render() {
   document.body.classList.toggle("role-technician", loggedIn && !isAdmin);
   document.body.classList.toggle("role-user", loggedIn && !isAdmin);
 
-  document.querySelectorAll("body > section.view").forEach(
+  document.querySelectorAll("main > section.view, body > section.view").forEach(
     function(s) {
       var isTarget = (s.id === S.tab || s.id === "view-" + S.tab);
     

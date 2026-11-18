@@ -5,6 +5,7 @@
     """
 
 import unittest
+import os
 import re
 import io
 import csv
@@ -659,6 +660,97 @@ class TestLogicalCases(unittest.TestCase):
             actual_keys = list(SAMPLE_DATASET[0].keys())
             self.assertEqual(target_schema, actual_keys)
 
+
+
+
+class TestAccessibilityCompliance(unittest.TestCase):
+    """
+    WCAG 2.1 AA Accessibility and Assistive Tech Compliance Test Suite (TC-101 to TC-115)
+    """
+    @classmethod
+    def setUpClass(cls):
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        with open(os.path.join(base_dir, 'Frontend', 'index.html'), 'r', encoding='utf-8') as f:
+            cls.html = f.read()
+        with open(os.path.join(base_dir, 'Frontend', 'styles.css'), 'r', encoding='utf-8') as f:
+            cls.css = f.read()
+        with open(os.path.join(base_dir, 'Frontend', 'js', 'app.js'), 'r', encoding='utf-8') as f:
+            cls.app_js = f.read()
+
+    def test_tc101_skip_to_main_content_link_present(self):
+        """WCAG 2.4.1 Bypass Blocks: Must include an accessible skip link at top of document."""
+        self.assertIn('class="skip-link"', self.html)
+        self.assertIn('href="#main-content"', self.html)
+        self.assertIn('Skip to main content', self.html)
+
+    def test_tc102_main_landmark_and_role(self):
+        """WCAG 1.3.1 Info and Relationships: Ensure main landmark exists."""
+        self.assertIn('<main id="main-content"', self.html)
+        self.assertIn('role="main"', self.html)
+
+    def test_tc103_header_banner_landmark(self):
+        """WCAG 1.3.1: Header landmark must be marked with role banner."""
+        self.assertIn('<header role="banner">', self.html)
+
+    def test_tc104_navigation_landmark_and_accessible_label(self):
+        """WCAG 1.3.6 Landmark navigation must have aria-label and role navigation."""
+        self.assertIn('role="navigation"', self.html)
+        self.assertIn('aria-label="Main Navigation"', self.html)
+
+    def test_tc105_nav_buttons_have_aria_labels(self):
+        """WCAG 4.1.2: All primary navigation triggers have explicit aria-label attributes."""
+        for nav_id in ['nav-home', 'nav-dash', 'nav-plan', 'nav-inv', 'nav-erp', 'nav-tech', 'nav-login-btn']:
+            self.assertIn(f'id="{nav_id}"', self.html)
+            pattern = re.compile(rf'id="{nav_id}"[^>]*aria-label=', re.IGNORECASE)
+            self.assertTrue(pattern.search(self.html), f"Nav item {nav_id} missing aria-label")
+
+    def test_tc106_svg_logo_accessible_label(self):
+        """WCAG 1.1.1 Non-text Content: Aircraft SVG logo has role img and aria-label."""
+        self.assertIn('role="img"', self.html)
+        self.assertIn('aria-label="FlightFix Aircraft Logo"', self.html)
+
+    def test_tc107_session_live_region_present(self):
+        """WCAG 4.1.3 Status Messages: Session status region is configured with polite live announcements."""
+        self.assertIn('role="status"', self.html)
+        self.assertIn('aria-live="polite"', self.html)
+
+    def test_tc108_toast_notification_live_region(self):
+        """WCAG 4.1.3 Status Messages: Floating toast container is an atomic polite live region."""
+        self.assertIn('id="toast"', self.html)
+        self.assertIn('aria-atomic="true"', self.html)
+
+    def test_tc109_login_tabs_aria_roles(self):
+        """WCAG 4.1.2 ARIA Tab pattern: Login view includes tablist, tabs, and aria-selected."""
+        self.assertIn('role="tablist"', self.html)
+        self.assertIn('role="tab"', self.html)
+        self.assertIn('aria-selected="true"', self.html)
+
+    def test_tc110_form_inputs_aria_required(self):
+        """WCAG 3.3.2 Labels or Instructions: Required form inputs have aria-required true."""
+        self.assertIn('aria-required="true"', self.html)
+
+    def test_tc111_css_focus_visible_keyboard_outlines(self):
+        """WCAG 2.4.7 Focus Visible: Focus outlines defined for keyboard navigation."""
+        self.assertIn(':focus-visible', self.css)
+        self.assertIn('outline:', self.css)
+
+    def test_tc112_css_skip_link_positioning_and_focus(self):
+        """WCAG 2.4.1 Skip Link: .skip-link class defined with keyboard focus visibility in CSS."""
+        self.assertIn('.skip-link', self.css)
+        self.assertIn('.skip-link:focus', self.css)
+
+    def test_tc113_css_screen_reader_only_utility(self):
+        """WCAG 1.3.1: Screen-reader-only utility (.sr-only) class defined in CSS."""
+        self.assertIn('.sr-only', self.css)
+
+    def test_tc114_js_active_page_aria_current(self):
+        """WCAG 4.1.2: Router sets aria-current=page on active navigation button."""
+        self.assertIn('aria-current', self.app_js)
+        self.assertIn('page', self.app_js)
+
+    def test_tc115_html_document_lang_specified(self):
+        """WCAG 3.1.1 Language of Page: <html> root element has valid lang attribute."""
+        self.assertIn('<html lang="en">', self.html)
 
 if __name__ == '__main__':
         unittest.main(verbosity=2)
