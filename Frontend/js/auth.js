@@ -1,6 +1,6 @@
-var AUTH_API = ((window.location.protocol.startsWith('http') && window.location.port !== '')
+var AUTH_API = (window.location.protocol.startsWith('http')
   ? window.location.origin
-  : 'http://localhost:8000') + '/api/auth';
+  : 'http://127.0.0.1:8000') + '/api/auth';
 
     var Auth = {
       user: null,

@@ -1,5 +1,7 @@
 import json
 import sys
+import time
+import html
 import random
 import os
 from pathlib import Path
@@ -34,7 +36,30 @@ def load_json_file(filepath):
             pass
     return None
 
+_STATE_CACHE = {'timestamp': 0.0, 'data': None}
+CACHE_TTL = 2.0  # 2-second in-memory TTL for high-throughput reads
+
+def invalidate_state_cache():
+    _STATE_CACHE['timestamp'] = 0.0
+    _STATE_CACHE['data'] = None
+
+def parse_json_body(request):
+    """Safely decode and parse JSON body with payload size guard (5 MB)."""
+    if not request.body:
+        return {}
+    if len(request.body) > 5 * 1024 * 1024:
+        raise ValueError("Payload exceeds allowable 5 MB limit.")
+    return json.loads(request.body.decode('utf-8'))
+
+def sanitize_text(val, max_len=255):
+    """Strip and sanitize user text to prevent stored XSS attacks."""
+    if not val or not isinstance(val, str):
+        return ''
+    cleaned = html.escape(val.strip())
+    return cleaned[:max_len]
+
 def save_json_file(filepath, data):
+    invalidate_state_cache()
     if 'test' in sys.argv:
         return
     try:
@@ -46,9 +71,14 @@ def save_json_file(filepath, data):
 
 def get_full_state_from_db_or_json():
     """Retrieve full MRO state from SQLite if populated, otherwise fallback to mro_db.json."""
+    now = time.time()
+    if _STATE_CACHE['data'] is not None and (now - _STATE_CACHE['timestamp']) < CACHE_TTL and 'test' not in sys.argv:
+        return _STATE_CACHE['data']
+
+    state = None
     try:
         if Aircraft.objects.exists() or Part.objects.exists() or WorkOrder.objects.exists():
-            return {
+            state = {
                 'ac': [a.to_dict() for a in Aircraft.objects.all()],
                 'parts': [p.to_dict() for p in Part.objects.all()],
                 'wo': [w.to_dict() for w in WorkOrder.objects.all()],
@@ -60,15 +90,16 @@ def get_full_state_from_db_or_json():
     except Exception:
         pass
 
-    data = load_json_file(MRO_DB_FILE)
-    if data:
-        return data
+    if state is None:
+        data = load_json_file(MRO_DB_FILE)
+        state = data if data else {
+            'ac': [], 'parts': [], 'wo': [], 'po': [],
+            'routes': [], 'technicians': [], 'feed': []
+        }
 
-    return {
-        'ac': [], 'parts': [], 'wo': [], 'po': [],
-        'routes': [], 'technicians': [], 'feed': []
-    }
-
+    _STATE_CACHE['timestamp'] = now
+    _STATE_CACHE['data'] = state
+    return state
 
 def verify_user_password(raw_password, stored_password):
     if not raw_password or not stored_password:
@@ -192,15 +223,15 @@ def auth_signup(request):
     except Exception:
         return JsonResponse({'success': False, 'error': 'Invalid JSON body'}, status=400)
 
-    email = (payload.get('email') or '').strip().lower()
+    email = sanitize_text((payload.get('email') or '').lower(), 150)
     password = (payload.get('password') or '').strip()
-    name = (payload.get('name') or '').strip() or 'Flight Crew Member'
+    name = sanitize_text((payload.get('name') or ''), 150) or 'Flight Crew Member'
     raw_role = (payload.get('role') or 'user').strip().lower()
     role = 'admin' if 'admin' in raw_role else 'user'
     role_display = 'Company Admin' if role == 'admin' else 'Field Technician'
-    clearance = payload.get('clearance') or ('Clearance Alpha' if role == 'admin' else 'Clearance Bravo')
-    station = (payload.get('station') or 'JFK').strip().upper()
-    employee_id = (payload.get('employeeId') or payload.get('employee_id') or '').strip()
+    clearance = sanitize_text(payload.get('clearance') or ('Clearance Alpha' if role == 'admin' else 'Clearance Bravo'), 50)
+    station = sanitize_text((payload.get('station') or 'JFK').upper(), 50)
+    employee_id = sanitize_text((payload.get('employeeId') or payload.get('employee_id') or ''), 50)
 
     if not email:
         return JsonResponse({'success': False, 'error': 'Official work email is required.'}, status=400)

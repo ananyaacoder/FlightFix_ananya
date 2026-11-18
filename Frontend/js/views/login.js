@@ -34,6 +34,17 @@ function getLocalRegisteredUsers() {
   }
 }
 
+function hashLocalPassword(str) {
+  var hash = 0;
+  if (!str) return "";
+  for (var i = 0; i < str.length; i++) {
+    var char = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash |= 0;
+  }
+  return "h_" + Math.abs(hash).toString(16) + "_" + str.length;
+}
+
 function saveLocalRegisteredUser(user, rawPass) {
   if (!user || !user.email) return;
   try {
@@ -53,7 +64,7 @@ function saveLocalRegisteredUser(user, rawPass) {
       employeeId: user.employeeId,
       role: user.role,
       station: user.station || "JFK",
-      password: rawPass
+      password: hashLocalPassword(rawPass)
     };
 
     if (existingIdx !== -1) {
@@ -131,7 +142,7 @@ function saveLocalRegisteredUser(user, rawPass) {
         var matched = localUsers.find(function(u) {
           var matchId = (u.email && u.email.toLowerCase() === ident.toLowerCase()) ||
                         (u.employeeId && u.employeeId.toLowerCase() === ident.toLowerCase());
-          return matchId && (u.password === pass);
+          return matchId && (u.password === hashLocalPassword(pass) || u.password === pass);
         });
 
         if (matched) {

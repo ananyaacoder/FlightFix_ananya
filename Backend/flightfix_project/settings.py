@@ -4,9 +4,16 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 FRONTEND_DIR = os.path.abspath(os.path.join(BASE_DIR.parent, 'Frontend'))
 
-SECRET_KEY = 'django-insecure-flightfix-mro-aerospace-secret-key-change-in-production'
+SECRET_KEY = os.environ.get(
+    'DJANGO_SECRET_KEY',
+    'django-insecure-flightfix-mro-aerospace-secret-key-change-in-production'
+)
 
-DEBUG = True
+# In production (e.g. Render environment), DEBUG defaults to False unless overridden
+DEBUG = os.environ.get(
+    'DJANGO_DEBUG',
+    'True' if not os.environ.get('RENDER') else 'False'
+).lower() in ('true', '1')
 
 ALLOWED_HOSTS = ['*']
 
@@ -19,7 +26,6 @@ CSRF_TRUSTED_ORIGINS = [
     'http://127.0.0.1:8000',
     'http://localhost:8000',
 ]
-
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -83,17 +89,29 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 APPEND_SLASH = False
 
+# Security & DoS Protection
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'SAMEORIGIN'
+SECURE_BROWSER_XSS_FILTER = True
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = 'Lax'
+DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5 MB max request size
+FILE_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5 MB max upload size
+
 class CustomCorsMiddleware:
+    """Optimized CORS middleware with preflight caching and permissive headers."""
     def __init__(self, get_response):
         self.get_response = get_response
 
     def __call__(self, request):
         if request.method == 'OPTIONS':
             from django.http import HttpResponse
-            response = HttpResponse()
+            response = HttpResponse(status=204)
         else:
             response = self.get_response(request)
+
         response['Access-Control-Allow-Origin'] = '*'
         response['Access-Control-Allow-Methods'] = 'GET, POST, PUT, PATCH, DELETE, OPTIONS'
-        response['Access-Control-Allow-Headers'] = '*'
+        response['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With'
+        response['Access-Control-Max-Age'] = '86400'  # Cache preflight for 24 hours
         return response

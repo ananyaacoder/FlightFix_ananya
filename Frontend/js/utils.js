@@ -19,14 +19,25 @@ function toast(msg) {
   }, 2500);
 }
 
+function escapeHtml(str) {
+  if (str === null || str === undefined) return "";
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+window.escapeHtml = escapeHtml;
+
 function note(who, text) {
   if (!S.feed) S.feed = [];
-  S.feed.unshift([who, text]);
+  S.feed.unshift([escapeHtml(who), escapeHtml(text)]);
   S.feed = S.feed.slice(0, 15);
 }
 
 function tag(cls, text) {
-  return '<span class="tag ' + cls + '">' + text + '</span>';
+  return '<span class="tag ' + escapeHtml(cls) + '">' + escapeHtml(text) + '</span>';
 }
 
 function part(id) {

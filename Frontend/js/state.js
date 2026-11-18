@@ -54,6 +54,9 @@ S.tab = "home";
 
 function save() {
   try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){}
+  if (window.API && typeof window.API.syncBackendState === 'function') {
+    window.API.syncBackendState();
+  }
 }
 
 function resetAll() {

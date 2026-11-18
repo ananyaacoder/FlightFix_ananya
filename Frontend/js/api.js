@@ -1,9 +1,15 @@
-const API_BASE = (window.location.protocol.startsWith('http') && window.location.port !== '')
+// FlightFix MRO API Client & Synchronizer
+const API_BASE = window.location.protocol.startsWith('http')
   ? `${window.location.origin}/api`
-  : 'http://localhost:8000/api';
+  : 'http://127.0.0.1:8000/api';
+
+let _syncDebounceTimer = null;
+let _isSyncing = false;
 
 const API = {
-
+  /**
+   * Fetch full state from backend on startup or reconnect
+   */
   async loadBackendState() {
     try {
       const res = await fetch(`${API_BASE}/sync`);
@@ -20,23 +26,34 @@ const API = {
     return false;
   },
 
-
-  async syncBackendState() {
-    try {
-      if (!window.S) return;
-      await fetch(`${API_BASE}/sync`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(window.S)
-      });
-    } catch (e) {
-     
-    }
+  /**
+   * Debounced synchronization to backend to optimize network throughput
+   */
+  syncBackendState() {
+    clearTimeout(_syncDebounceTimer);
+    _syncDebounceTimer = setTimeout(async () => {
+      if (_isSyncing || !window.S) return;
+      _isSyncing = true;
+      try {
+        await fetch(`${API_BASE}/sync`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(window.S)
+        });
+      } catch (e) {
+        // Fallback silently in offline mode
+      } finally {
+        _isSyncing = false;
+      }
+    }, 250);
   },
 
+  /**
+   * Fetch live aircraft telemetry sensor readings
+   */
   async getTelemetry(aircraftId) {
     try {
-      const res = await fetch(`${API_BASE}/aircraft/${aircraftId}/telemetry`);
+      const res = await fetch(`${API_BASE}/aircraft/${encodeURIComponent(aircraftId)}/telemetry`);
       const data = await res.json();
       return data.data;
     } catch (e) {
