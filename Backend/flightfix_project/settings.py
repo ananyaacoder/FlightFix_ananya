@@ -10,7 +10,17 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-# Application definition
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.trycloudflare.com',
+    'https://*.onrender.com',
+    'https://*.railway.app',
+    'https://*.loca.lt',
+    'https://*.ngrok-free.app',
+    'http://127.0.0.1:8000',
+    'http://localhost:8000',
+]
+
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -71,11 +81,8 @@ STATICFILES_DIRS = [FRONTEND_DIR] if os.path.exists(FRONTEND_DIR) else []
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Disable automatic slash appending so POST /api/sync works seamlessly without redirect
 APPEND_SLASH = False
 
-
-# Lightweight universal CORS middleware (works out-of-the-box with 0 extra packages)
 class CustomCorsMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response

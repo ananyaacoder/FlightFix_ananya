@@ -23,9 +23,6 @@ MRO_DB_FILE = DATA_DIR / 'mro_db.json'
 USERS_FILE = DATA_DIR / 'users.json'
 
 
-# ==============================================================================
-# Helper functions for database seeding and JSON synchronization
-# ==============================================================================
 
 def load_json_file(filepath):
     if os.path.exists(filepath):
@@ -61,7 +58,6 @@ def get_full_state_from_db_or_json():
     except Exception:
         pass
 
-    # Fallback to mro_db.json
     data = load_json_file(MRO_DB_FILE)
     if data:
         return data
@@ -72,20 +68,19 @@ def get_full_state_from_db_or_json():
     }
 
 
-# Password verification & secure hashing helpers
 def verify_user_password(raw_password, stored_password):
     if not raw_password or not stored_password:
         return False
-    # 1. Plain text comparison (for legacy seeded accounts)
+   
     if raw_password == stored_password:
         return True
-    # 2. Django PBKDF2/SHA256 password hash check
+    
     try:
         if check_password(raw_password, stored_password):
             return True
     except Exception:
         pass
-    # 3. Simple SHA256 fallback
+   
     try:
         import hashlib
         sha = hashlib.sha256(raw_password.encode('utf-8')).hexdigest()
@@ -102,10 +97,6 @@ def hash_password(raw_password):
         import hashlib
         return hashlib.sha256(raw_password.encode('utf-8')).hexdigest()
 
-
-# ==============================================================================
-# 1. AUTHENTICATION VIEWS (/api/auth)
-# ==============================================================================
 
 @csrf_exempt
 @require_http_methods(["POST"])
@@ -124,13 +115,12 @@ def auth_login(request):
 
     matched_user = None
 
-    # 1. Check SQLite database (by email or employee_id, case-insensitive)
     try:
         user_obj = CrewUser.objects.filter(
             models.Q(email__iexact=ident) | models.Q(employee_id__iexact=ident)
         ).first()
         if user_obj and verify_user_password(password, user_obj.password):
-            # If stored as plain-text, upgrade to secure hashed password
+         
             if user_obj.password == password:
                 user_obj.password = hash_password(password)
                 user_obj.save(update_fields=['password'])
@@ -138,7 +128,6 @@ def auth_login(request):
     except Exception as e:
         print("[Auth Login] SQLite lookup error:", e)
 
-    # 2. Check users.json fallback / sync
     users = load_json_file(USERS_FILE) or []
     json_matched = None
     for idx, u in enumerate(users):
@@ -146,7 +135,7 @@ def auth_login(request):
         match_emp = u.get('employeeId', '').strip().lower() == ident.lower()
         if (match_email or match_emp) and verify_user_password(password, u.get('password')):
             json_matched = u
-            # If plain text, upgrade in json too
+         
             if u.get('password') == password:
                 users[idx]['password'] = hash_password(password)
                 save_json_file(USERS_FILE, users)
@@ -162,7 +151,7 @@ def auth_login(request):
             'clearance': json_matched.get('clearance', 'Clearance Alpha'),
             'station': json_matched.get('station', 'JFK'),
         }
-        # Sync into SQLite
+        
         try:
             CrewUser.objects.get_or_create(
                 email__iexact=json_matched.get('email'),
@@ -218,7 +207,6 @@ def auth_signup(request):
     if not employee_id:
         employee_id = f"EMP-{random.randint(1000, 9999)}"
 
-    # 1. STRICT DUPLICATE PREVENTION IN SQLITE
     try:
         if CrewUser.objects.filter(email__iexact=email).exists():
             return JsonResponse({
@@ -233,7 +221,6 @@ def auth_signup(request):
     except Exception as e:
         print("[Auth Signup] DB check error:", e)
 
-    # 2. STRICT DUPLICATE PREVENTION IN USERS.JSON
     users = load_json_file(USERS_FILE) or []
     for u in users:
         u_email = u.get('email', '').strip().lower()
@@ -249,7 +236,6 @@ def auth_signup(request):
                 'error': f"The Employee ID '{employee_id}' is already registered to an existing crew member. Duplicate IDs are prohibited."
             }, status=409)
 
-    # 3. SECURELY HASH PASSWORD FOR PRIVACY & INTEGRITY
     hashed_pass = hash_password(password)
 
     new_user_dict = {
@@ -262,7 +248,6 @@ def auth_signup(request):
         'station': station,
     }
 
-    # 4. SAVE INTO SQLITE
     try:
         user_obj = CrewUser.objects.create(
             name=name,
@@ -277,11 +262,9 @@ def auth_signup(request):
     except Exception as e:
         print("[Auth Signup] DB insert error:", e)
 
-    # 5. SAVE INTO USERS.JSON (With hashed password)
     users.append({**new_user_dict, 'password': hashed_pass})
     save_json_file(USERS_FILE, users)
 
-    # Return response WITHOUT password for privacy
     return JsonResponse({
         'success': True,
         'message': f"Account registered successfully for {name} [{role_display}].",
@@ -291,11 +274,6 @@ def auth_signup(request):
 
 def auth_me(request):
     return JsonResponse({'success': True, 'status': 'active'})
-
-
-# ==============================================================================
-# 2. STATE SYNC (/api/sync)
-# ==============================================================================
 
 @csrf_exempt
 def sync_state(request):
@@ -309,7 +287,6 @@ def sync_state(request):
         except Exception:
             return JsonResponse({'success': False, 'message': 'Invalid state payload'}, status=400)
 
-        # Sync workorders to SQLite if present
         if isinstance(body, dict) and isinstance(body.get('wo'), list):
             for wo in body['wo']:
                 wo_id = str(wo.get('id') or '')
@@ -328,16 +305,10 @@ def sync_state(request):
                         }
                     )
 
-        # Save to mro_db.json
         save_json_file(MRO_DB_FILE, body)
         return JsonResponse({'success': True, 'message': 'Full MRO state synchronized to server'})
 
     return JsonResponse({'success': False, 'message': 'Method not allowed'}, status=405)
-
-
-# ==============================================================================
-# 3. AIRCRAFT & TELEMETRY (/api/aircraft, /api/fleet)
-# ==============================================================================
 
 @csrf_exempt
 def aircraft_list_create(request):
@@ -444,11 +415,6 @@ def aircraft_telemetry(request, ac_id):
 
     return JsonResponse({'success': True, 'data': telemetry})
 
-
-# ==============================================================================
-# 4. WORK ORDERS (/api/workorders)
-# ==============================================================================
-
 @csrf_exempt
 def workorders_list_create(request):
     if request.method == 'GET':
@@ -497,7 +463,6 @@ def workorders_list_create(request):
             }
         )
 
-        # Log activity
         try:
             ActivityFeed.objects.create(
                 user='Flight Dispatch',
@@ -507,7 +472,6 @@ def workorders_list_create(request):
         except Exception:
             pass
 
-        # Sync to json as backup
         state = get_full_state_from_db_or_json()
         save_json_file(MRO_DB_FILE, state)
 
@@ -561,7 +525,6 @@ def workorder_detail(request, wo_id):
 
         wo_obj.save()
 
-        # Sync to json as backup
         state = get_full_state_from_db_or_json()
         save_json_file(MRO_DB_FILE, state)
 
@@ -626,7 +589,6 @@ def workorder_signoff(request, wo_id):
     wo_obj.checklist = c
     wo_obj.save()
 
-    # Clear AOG and mark aircraft in_service
     ac_reg = wo_obj.aircraft
     ac_obj = Aircraft.objects.filter(reg__iexact=ac_reg).first()
     if not ac_obj and str(ac_reg).isdigit():
@@ -636,7 +598,6 @@ def workorder_signoff(request, wo_id):
         ac_obj.status = 'in_service'
         ac_obj.save()
 
-    # Log in activity feed
     try:
         ActivityFeed.objects.create(
             user='Lead Tech',
@@ -655,10 +616,6 @@ def workorder_signoff(request, wo_id):
         'message': f"Work order #{wo_id} certified. Aircraft {ac_reg} is released to service!"
     })
 
-
-# ==============================================================================
-# 5. PARTS INVENTORY (/api/parts)
-# ==============================================================================
 
 @csrf_exempt
 def parts_list_create(request):
@@ -760,11 +717,6 @@ def part_restock(request, part_id):
     save_json_file(MRO_DB_FILE, state)
     return JsonResponse({'success': True, 'data': matched})
 
-
-# ==============================================================================
-# 6. PROCUREMENT & ERP (/api/procurement)
-# ==============================================================================
-
 @csrf_exempt
 def procurement_list_create(request):
     state = get_full_state_from_db_or_json()
@@ -822,7 +774,6 @@ def procurement_receive(request, po_id):
     matched['status'] = 'received'
     matched['s'] = 'received'
 
-    # Auto-increment inventory stock
     part_id = matched.get('partId') or matched.get('p')
     qty = matched.get('quantity') or matched.get('q', 0)
 
@@ -836,11 +787,6 @@ def procurement_receive(request, po_id):
 
     save_json_file(MRO_DB_FILE, state)
     return JsonResponse({'success': True, 'data': matched})
-
-
-# ==============================================================================
-# 7. ROUTES & TECHNICIANS (/api/routes, /api/technicians)
-# ==============================================================================
 
 @csrf_exempt
 def routes_list_create(request):
@@ -915,11 +861,6 @@ def technician_assign(request, tech_id):
 
     save_json_file(MRO_DB_FILE, state)
     return JsonResponse({'success': True, 'data': matched})
-
-
-# ==============================================================================
-# 8. DASHBOARDS (/api/admin/dashboard, /api/technician/dashboard)
-# ==============================================================================
 
 @require_http_methods(["GET"])
 def admin_dashboard(request):

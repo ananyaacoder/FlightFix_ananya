@@ -1,7 +1,3 @@
-/* ==============================================================================
-   FlightFix MRO — Field Technician Portal & Mobile Workbench (Integrated with Django)
-   ============================================================================== */
-
 function rTech() {
   var techEl = $("tech");
   if (!techEl) return;
@@ -23,7 +19,7 @@ function rTech() {
 
   var orders = (S && S.wo && S.wo.length) ? S.wo : [];
 
-  // Find active work order
+ 
   var activeWo = null;
   if (S.tech) {
     activeWo = woById(S.tech);
@@ -35,7 +31,6 @@ function rTech() {
     }) || orders[0];
   }
 
-  // If no work orders exist
   if (!activeWo) {
     techEl.innerHTML =
       "<div class='phone' style='text-align:center;padding:40px 20px;'>" +
@@ -49,7 +44,7 @@ function rTech() {
     return;
   }
 
-  // Normalize checklist
+
   if (!activeWo.c || !activeWo.c.length) {
     var rawC = activeWo.checklist;
     if (rawC && rawC.length) {
@@ -63,7 +58,6 @@ function rTech() {
     }
   }
 
-  // Normalize checklist items to [stepName, doneInt]
   activeWo.c = activeWo.c.map(function(item) {
     if (Array.isArray(item) && item.length >= 2) {
       return [String(item[0]), item[1] ? 1 : 0];
@@ -76,13 +70,11 @@ function rTech() {
     }
   });
 
-  // Calculate completion
   var totalSteps = activeWo.c.length;
   var doneSteps = activeWo.c.filter(function(t) { return t[1] === 1; }).length;
   var pct = totalSteps > 0 ? Math.round((doneSteps / totalSteps) * 100) : 0;
   var allDone = (totalSteps > 0 && doneSteps === totalSteps);
 
-  // Selector dropdown for all work orders
   var woOptions = orders.map(function(w) {
     var isSel = (String(w.id) === String(activeWo.id));
     var selAttr = isSel ? "selected" : "";
@@ -96,7 +88,6 @@ function rTech() {
       "</option>";
   }).join("");
 
-  // Checklist items HTML
   var jobsHtml = activeWo.c.map(function(t, idx) {
     var isDone = (t[1] === 1);
     var cls = isDone ? "job done" : "job";
@@ -112,7 +103,6 @@ function rTech() {
     "</div>";
   }).join("");
 
-  // Sign-off status logic
   var st = activeWo.s || activeWo.status || "open";
   var isDone = (st === "done" || st === "closed");
 
@@ -199,9 +189,6 @@ function rTech() {
     "</div>";
 }
 
-/* ==============================================================================
-   Technician Action Handlers (Change Order, Toggle Step, Airworthiness Sign-Off)
-   ============================================================================== */
 
 function changeTechWo(val) {
   S.tech = val;
@@ -213,11 +200,9 @@ function toggleJob(woId, idx) {
   var w = woById(woId);
   if (!w || !w.c || !w.c[idx]) return;
 
-  // Toggle checklist step
   w.c[idx][1] = (w.c[idx][1] === 1) ? 0 : 1;
   w.checklist = w.c;
 
-  // If order was open, advance to progress
   var currentSt = w.s || w.status;
   if (currentSt === "open") {
     w.s = "progress";
@@ -231,13 +216,12 @@ function toggleJob(woId, idx) {
   var stepState = w.c[idx][1] ? "completed" : "marked incomplete";
   toast("Step #" + (idx + 1) + " " + stepState + ": " + stepLabel);
 
-  // Sync to Django Backend
   fetch('/api/workorders/' + woId + '/checklist/' + idx, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ done: w.c[idx][1] === 1 })
   }).catch(function(e) {
-    // Fallback sync
+ 
     fetch('/api/workorders/' + woId, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -253,13 +237,11 @@ function signOff(woId) {
   w.s = "done";
   w.status = "done";
 
-  // Mark all checklist items complete
   if (w.c && w.c.length) {
     w.c.forEach(function(item) { item[1] = 1; });
     w.checklist = w.c;
   }
 
-  // Clear AOG status for target aircraft
   var acReg = w.a || w.aircraft;
   var acObj = null;
   if (S && S.ac) {
@@ -277,7 +259,6 @@ function signOff(woId) {
   render();
   toast(acReg + " certified airworthy! Work Order #" + woId + " closed.");
 
-  // Sync to Django Backend
   fetch('/api/workorders/' + woId + '/signoff', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -294,7 +275,6 @@ function signOff(woId) {
   }).catch(function(e) {});
 }
 
-// Global window bindings
 window.rTech = rTech;
 window.renderTech = rTech;
 window.changeTechWo = changeTechWo;

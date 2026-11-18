@@ -3,7 +3,6 @@
       return document.getElementById(id) || (typeof window.$ === "function" ? window.$(id) : null);
     }
 
-    // Safe session reader (prevents crashes from corrupt localStorage data)
     function getStoredUser() {
       try {
         var raw = sessionStorage.getItem("flightfix_current_user") || sessionStorage.getItem("flightfix_user");
@@ -14,7 +13,6 @@
       }
     }
 
-    // Universal notification toast helper
     function notify(msg) {
       if (typeof window.toast === "function") {
         window.toast(msg);
@@ -25,7 +23,6 @@
       }
     }
 
-    // Persistent local user registry for offline resilience & cross-session login
 function getLocalRegisteredUsers() {
   try {
     var raw = localStorage.getItem("flightfix_registered_users");
@@ -69,9 +66,6 @@ function saveLocalRegisteredUser(user, rawPass) {
 }
 
 
-    // ==============================================================================
-    // 1. TAB CONTROLLER (SIGN IN VS REGISTER)
-    // ==============================================================================
     function switchAuthTab(tab) {
       var loginBlock = getEl("form-login-block");
       var regBlock = getEl("form-register-block");
@@ -91,9 +85,6 @@ function saveLocalRegisteredUser(user, rawPass) {
       }
     }
 
-    // ==============================================================================
-    // 2. HANDLE SIGN IN
-    // ==============================================================================
         async function handleFormLogin(event) {
       if (event && event.preventDefault) event.preventDefault();
 
@@ -123,7 +114,7 @@ function saveLocalRegisteredUser(user, rawPass) {
           return;
         }
       } catch (err) {
-        // Offline / storage fallback: strictly verify credentials from persistent registry
+       
         var localUsers = getLocalRegisteredUsers();
         var matched = localUsers.find(function(u) {
           var matchId = (u.email && u.email.toLowerCase() === ident.toLowerCase()) ||
@@ -185,12 +176,12 @@ function saveLocalRegisteredUser(user, rawPass) {
           saveLocalRegisteredUser(data.user, pass);
           applyPrivateSession(data.user);
         } else {
-          // Strictly reject duplicate registration and notify user
+          
           notify(data.error || data.message || "Registration failed. That email or Employee ID is already registered.");
           return;
         }
       } catch (err) {
-        // Offline registration fallback with strict duplicate verification
+        
         var localRegistry = getLocalRegisteredUsers();
         var duplicate = localRegistry.find(function(u) {
           return (u.email && u.email.toLowerCase() === email.toLowerCase()) ||
@@ -217,7 +208,6 @@ function saveLocalRegisteredUser(user, rawPass) {
     function applyPrivateSession(user) {
       if (!user) return;
 
-      // Role normalization using centralized isUserAdmin
       var isAdmin = (typeof isUserAdmin === "function") ? isUserAdmin(user) : (user.role && user.role.toLowerCase().includes("admin"));
       var role = isAdmin ? "admin" : "user";
       user.role = role;
@@ -234,12 +224,10 @@ function saveLocalRegisteredUser(user, rawPass) {
       var roleLabel = (role === "admin") ? "COMPANY ADMIN" : "FIELD TECHNICIAN";
       notify("Signed in as " + (user.name || user.email) + " [" + roleLabel + "]");
 
-      // Navigate to Dashboard view
       if (typeof window.showView === "function") {
         window.showView("dash");
       }
 
-      // Immediately render the role-authorized dashboard
       if (typeof window.renderDashboard === "function") {
         window.renderDashboard();
       } else if (typeof window.rDash === "function") {
@@ -247,9 +235,6 @@ function saveLocalRegisteredUser(user, rawPass) {
       }
     }
 
-    // ==============================================================================
-    // 5. SECURE LOGOUT
-    // ==============================================================================
     function logoutUser() {
       try {
         sessionStorage.setItem("flightfix_current_user", "");
@@ -269,7 +254,6 @@ function saveLocalRegisteredUser(user, rawPass) {
       updateNavSessionUI(null);
       notify("You have safely logged out.");
 
-      // Clear inputs for privacy
       var inputs = document.querySelectorAll("#login input");
       inputs.forEach(function(input) { input.value = ""; });
 
@@ -280,9 +264,6 @@ function saveLocalRegisteredUser(user, rawPass) {
       }
     }
 
-    // ==============================================================================
-    // 6. NAVBAR UI SYNCHRONIZATION
-    // ==============================================================================
     function updateNavSessionUI(user) {
       var loggedIn = !!(user && (user.role || user.email || user.employeeId));
       var isAdmin = loggedIn && ((typeof isUserAdmin === "function") ? isUserAdmin(user) : !!(user && user.role && user.role.toLowerCase().includes("admin")));
@@ -301,7 +282,6 @@ function saveLocalRegisteredUser(user, rawPass) {
 
       var badgeContainer = document.querySelector(".session-badge-container");
 
-      // Strictly hide all protected buttons & ID badges when not logged in
       if (!loggedIn) {
         if (badgeContainer) badgeContainer.style.display = "none";
         if (nameEl) nameEl.textContent = "";
@@ -320,19 +300,16 @@ function saveLocalRegisteredUser(user, rawPass) {
         return;
       }
 
-      // Logged in user navigation configuration (only on this logged-in session side)
       if (badgeContainer) badgeContainer.style.display = "inline-flex";
       if (nameEl) nameEl.textContent = user.name || user.email || user.employeeId;
       if (loginBtn) loginBtn.style.display = "none";
       if (logoutBtn) logoutBtn.style.display = "inline-block";
 
-      // Dashboard button: accessible to both roles, clearly titled
       if (dashBtn) {
         dashBtn.style.display = "inline-block";
         dashBtn.textContent = isAdmin ? "Dashboard" : "My Assigned Tasks";
       }
 
-      // Admin-only buttons: strictly shown ONLY for Company Admin
       var adminOnlyButtons = document.querySelectorAll(".nav-admin-only, #nav-plan, #nav-inv, #nav-erp, #nav-tech, #nav-reset");
       adminOnlyButtons.forEach(function(b) {
         b.style.display = isAdmin ? "inline-block" : "none";
@@ -349,14 +326,12 @@ function saveLocalRegisteredUser(user, rawPass) {
       }
     }
 
-    // View Renderer fallback
     function rLogin() {
       var user = getStoredUser();
       updateNavSessionUI(user);
     }
     var renderLogin = rLogin;
 
-    // Global Window Bindings for HTML Attributes
     window.switchAuthTab = switchAuthTab;
     window.handleFormLogin = handleFormLogin;
     window.handleFormRegister = handleFormRegister;
@@ -365,7 +340,6 @@ function saveLocalRegisteredUser(user, rawPass) {
     window.rLogin = rLogin;
     window.renderLogin = rLogin;
 
-    // Initialize session indicator on script load
     if (document.readyState === "loading") {
       document.addEventListener("DOMContentLoaded", function() {
         updateNavSessionUI(getStoredUser());

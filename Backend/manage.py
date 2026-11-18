@@ -1,7 +1,6 @@
 import os
 import sys
 
-# Ensure UTF-8 output encoding on Windows consoles
 if sys.platform == 'win32':
     try:
         sys.stdout.reconfigure(encoding='utf-8', errors='replace')
@@ -12,7 +11,6 @@ if sys.platform == 'win32':
 def main():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'flightfix_project.settings')
 
-    # Detect port if passed
     port = "8000"
     if len(sys.argv) > 1 and sys.argv[1] == 'runserver':
         for arg in sys.argv[2:]:

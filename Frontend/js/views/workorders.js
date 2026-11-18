@@ -1,7 +1,3 @@
-/* ==============================================================================
-   FlightFix MRO — Plan & Hangar Work Orders (Integrated with Django REST API)
-   ============================================================================== */
-
 function rPlan() {
   var planEl = $("plan");
   if (!planEl) return;
@@ -241,10 +237,6 @@ function rPlan() {
     "</div>";
 }
 
-/* ==============================================================================
-   Work Order Actions (Add, Delete, Start, Tech View)
-   ============================================================================== */
-
 function addWo() {
   var a = $("wa") ? $("wa").value : "";
   if (!a) return toast("Please select an aircraft first");
@@ -265,7 +257,6 @@ function addWo() {
     return toast("Task duration (" + spanDays + " days) exceeds Friday hangar cutoff!");
   }
 
-  // Prevent double booking in same bay on overlapping days
   var orders = (S && S.wo) ? S.wo : [];
   var clash = orders.some(function(w) {
     var st = w.s || w.status || "open";
@@ -284,7 +275,6 @@ function addWo() {
     return toast(b + " is already occupied on those scheduled days!");
   }
 
-  // Parts allocation
   var pid = $("wp") ? $("wp").value : "";
   var partsList = [];
   if (pid) {
@@ -292,7 +282,6 @@ function addWo() {
     partsList.push({ id: pid, partNo: pid, q: qVal, qty: qVal });
   }
 
-  // Build task checklist
   var taskArr = [];
   if (typeof TASKS !== "undefined" && TASKS[k]) {
     taskArr = TASKS[k];
@@ -330,7 +319,6 @@ function addWo() {
   render();
   toast("Work order #" + newId + " successfully dispatched to " + b);
 
-  // Sync to Django Backend
   fetch('/api/workorders', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -360,7 +348,6 @@ function delWo(id) {
   render();
   toast("Work order #" + id + " cancelled");
 
-  // Sync to Django Backend
   fetch('/api/workorders/' + id, {
     method: 'DELETE'
   }).catch(function(e) {});
@@ -404,7 +391,6 @@ function startWo(id) {
     return toast("Parts inventory shortage! Purchase Order automatically raised.");
   }
 
-  // Deduct parts from stock
   partsList.forEach(function(p) {
     var pid = p.id || p.partNo;
     var itm = part(pid);
@@ -418,7 +404,6 @@ function startWo(id) {
   w.s = "progress";
   w.status = "progress";
 
-  // Ensure checklist is loaded
   if (!w.c || !w.c.length) {
     var kindVal = w.k || w.kind || "A-Check";
     var taskArr = (typeof TASKS !== "undefined" && TASKS[kindVal]) ? TASKS[kindVal] : ["Visual inspection", "Hydraulic check", "Telemetry sign-off"];
@@ -432,7 +417,6 @@ function startWo(id) {
   render();
   toast("Work order #" + id + " active! Parts allocated & workbench ready.");
 
-  // Sync to Django Backend
   fetch('/api/workorders/' + id, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
@@ -445,7 +429,6 @@ function startWo(id) {
   }).catch(function(e) {});
 }
 
-// Global window bindings
 window.rPlan = rPlan;
 window.renderPlan = rPlan;
 window.addWo = addWo;

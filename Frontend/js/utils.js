@@ -1,10 +1,8 @@
-/* Shared helpers */
 function $(id) { return document.getElementById(id); }
 
 function toast(msg) {
   var t = $("toast") || document.getElementById("toast");
 
-  // Create element if missing
   if (!t) {
     t = document.createElement("div");
     t.id = "toast";
@@ -59,7 +57,6 @@ function low() {
   return S.parts.filter(function(p) { return (p.q || 0) <= (p.m || 1); });
 }
 
-/* Derived aircraft status: [css class, label] */
 function status(a) {
   if (a.aog) return ["er", "AOG"];
   var reg = a.r || a.reg;
@@ -72,7 +69,6 @@ function status(a) {
   return ["ok", "Serviceable"];
 }
 
-/* Raise a purchase order */
 function po(partId, qty, why) {
   if (!S.po) S.po = [];
   var newId = "PO-" + (1000 + S.po.length + 1);
@@ -80,7 +76,6 @@ function po(partId, qty, why) {
   note("Procurement", "PO raised for " + qty + "× " + partId + " (" + why + ")");
 }
 
-/* Centralized Session & Authentication Status */
 function getStoredUser() {
   try {
     var raw = sessionStorage.getItem("flightfix_current_user") || sessionStorage.getItem("flightfix_user");

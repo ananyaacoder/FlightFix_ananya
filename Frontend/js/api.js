@@ -1,13 +1,9 @@
-// ============================================================================
-// FlightFix MRO — Frontend API Client & State Sync Bridge
-// ============================================================================
-
 const API_BASE = (window.location.protocol.startsWith('http') && window.location.port !== '')
   ? `${window.location.origin}/api`
   : 'http://localhost:8000/api';
 
 const API = {
-  // Sync full state with backend on startup
+
   async loadBackendState() {
     try {
       const res = await fetch(`${API_BASE}/sync`);
@@ -24,7 +20,7 @@ const API = {
     return false;
   },
 
-  // Save changes back to the backend
+
   async syncBackendState() {
     try {
       if (!window.S) return;
@@ -34,11 +30,10 @@ const API = {
         body: JSON.stringify(window.S)
       });
     } catch (e) {
-      // Offline fallback
+     
     }
   },
 
-  // Fetch live telemetry for 3D model
   async getTelemetry(aircraftId) {
     try {
       const res = await fetch(`${API_BASE}/aircraft/${aircraftId}/telemetry`);
@@ -50,7 +45,6 @@ const API = {
   }
 };
 
-// Auto-sync on page load
 window.addEventListener('DOMContentLoaded', () => {
   API.loadBackendState().then(() => {
     if (typeof render === 'function') {

@@ -40,7 +40,7 @@
     "name": "Ananya Agarwal",
     "email": "ananyaagarwal1402@gmail.com",
     "employeeId": "EMP-9143",
-    "password": "dhwani123#",
+    "password": "pbkdf2_sha256$1500000$qJLd5nUwams8FbxNbZ9NBr$igiFuGVc+WXuW1PhRH4jhXdswf+XpnnnShGnAdDxiSU=",
     "role": "AME",
     "clearance": "Clearance Alpha",
     "station": "JFK"
@@ -64,5 +64,25 @@
     "clearance": "Clearance Alpha",
     "station": "SIH",
     "password": "pbkdf2_sha256$1500000$bKKxQGgTGFiHUAubxsRhIn$8j6JV1PUYjTfyQJ4bv0fk21DrQ08z2WaYsFzVBHI8PI="
+  },
+  {
+    "id": 8,
+    "name": "Neetu Agarwal",
+    "email": "neetuagarwal882@gmail.com",
+    "employeeId": "AME-888",
+    "role": "Field Technician",
+    "clearance": "Clearance Bravo",
+    "station": "LHR",
+    "password": "pbkdf2_sha256$1500000$NU8zEy0tBimEJHlQIk7In3$+kT9FLEPgZXzGg9+39UPG24UgZ6r1PumevX4gWaupio="
+  },
+  {
+    "id": 9,
+    "name": "Naresh Kumar Agarwal",
+    "email": "naresh.agarwal882@gmail.com",
+    "employeeId": "AME-800",
+    "role": "Company Admin",
+    "clearance": "Clearance Alpha",
+    "station": "SIN",
+    "password": "pbkdf2_sha256$1500000$CKooPEsBjkNfwBk6dP04gP$Z7IVPvnlakK/00fMt6isibqxiMmwsFdQn9owG5A1RsQ="
   }
 ]

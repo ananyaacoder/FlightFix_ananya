@@ -91,7 +91,7 @@
       "h": 32400.0,
       "cycles": 7100,
       "c": 7100,
-      "status": "aog",
+      "status": "in_service",
       "aog": 0,
       "location": "SIN (Singapore)",
       "st": "SIN (Singapore)",
@@ -501,43 +501,43 @@
       "b": "Bay 1",
       "day": "Mon",
       "d": "Mon",
-      "status": "open",
-      "s": "open",
+      "status": "done",
+      "s": "done",
       "priority": "aog",
       "checklist": [
         [
           "Jack aircraft on main gear landing bogie pads",
-          0
+          1
         ],
         [
           "Bleed hydraulic brake line system B",
-          0
+          1
         ],
         [
           "Mount carbon disc wear pack and torque to 450 Nm",
-          0
+          1
         ],
         [
           "Anti-skid telemetry dynamic rollout simulation",
-          0
+          1
         ]
       ],
       "c": [
         [
           "Jack aircraft on main gear landing bogie pads",
-          0
+          1
         ],
         [
           "Bleed hydraulic brake line system B",
-          0
+          1
         ],
         [
           "Mount carbon disc wear pack and torque to 450 Nm",
-          0
+          1
         ],
         [
           "Anti-skid telemetry dynamic rollout simulation",
-          0
+          1
         ]
       ],
       "parts": [
@@ -727,6 +727,52 @@
         }
       ],
       "assignedTo": "Marcus Vance"
+    },
+    {
+      "id": "WO-923",
+      "aircraft": "N789AA",
+      "a": "N789AA",
+      "title": "tire",
+      "kind": "tire",
+      "k": "tire",
+      "bay": "Ramp Stand",
+      "b": "Ramp Stand",
+      "day": "Mon",
+      "d": "Mon",
+      "status": "open",
+      "s": "open",
+      "priority": "routine",
+      "checklist": [
+        [
+          "Inspect defect area & assess limits per maintenance manual",
+          0
+        ],
+        [
+          "Perform defect rectification or deferral per MEL",
+          0
+        ],
+        [
+          "Post-rectification operational test & logbook entry",
+          0
+        ]
+      ],
+      "c": [
+        [
+          "Inspect defect area & assess limits per maintenance manual",
+          0
+        ],
+        [
+          "Perform defect rectification or deferral per MEL",
+          0
+        ],
+        [
+          "Post-rectification operational test & logbook entry",
+          0
+        ]
+      ],
+      "parts": [],
+      "p": [],
+      "assignedTo": "Field Technician"
     }
   ],
   "po": [
@@ -883,6 +929,14 @@
       "s": "pending",
       "note": "manual reorder",
       "totalCost": 0.0
+    },
+    {
+      "partId": "p_5",
+      "quantity": 2,
+      "note": "manual reorder",
+      "id": "po_1794300852836",
+      "status": "pending",
+      "s": "pending"
     }
   ],
   "routes": [

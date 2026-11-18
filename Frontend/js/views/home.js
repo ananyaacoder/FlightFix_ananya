@@ -1,10 +1,3 @@
-// ============================================================================
-// FlightFix MRO — Home View: High-Performance Lag-Free Video + 3D Cutaway
-// Hardware-Accelerated Video, Viewport-Aware Canvas Engine &
-// Photorealistic 3D Globe with Environmental Features (Auroras, Sun Glint,
-// Twilight Terminator Ring, Night City Lights, Elevated 3D Arcs & Jetliners)
-// ============================================================================
-
 const D2R = Math.PI / 180;
 let homeMode = 'aircraft';
 let homeAnimId = null;
@@ -58,7 +51,6 @@ function getMroState() {
   return window.S || { ac: [], parts: [], wo: [], po: [], routes: [] };
 }
 
-// 3D Aircraft Camera State (Preserved 100%)
 const acCam = {
   yaw: 0.65,
   pitch: 0.32,
@@ -84,7 +76,6 @@ const acCam = {
   radarSweep: 0
 };
 
-// 3D Globe State with Environmental Telemetry
 const globeState = {
   lon: -55,
   lat: 10,
@@ -106,7 +97,6 @@ const globeState = {
   R: 300
 };
 
-// Global Airport Dictionary
 const AP = {
   JFK: [40.6, -73.8, "New York"], MIA: [25.8, -80.3, "Miami"], LAX: [33.9, -118.4, "Los Angeles"],
   ORD: [41.9, -87.9, "Chicago"], MEX: [19.4, -99.1, "Mexico City"], BOG: [4.7, -74.1, "Bogotá"],
@@ -125,7 +115,6 @@ const AIRPORTS = Object.keys(AP).map(k => ({
   lon: AP[k][1]
 }));
 
-// Procedural Continental Polygons
 const LAND = [
   [[-168,66],[-155,71],[-125,70],[-95,72],[-80,70],[-62,58],[-55,50],[-66,44],[-76,36],[-81,30],[-80,25],[-88,30],[-97,27],[-97,20],[-88,21],[-83,10],[-77,8],[-86,12],[-95,16],[-105,20],[-112,30],[-118,34],[-124,42],[-125,49],[-135,58],[-150,60],[-165,60]],
   [[-83,9],[-77,8],[-79,9],[-82,10],[-85,13],[-88,16],[-90,15],[-88,14]],
@@ -135,7 +124,6 @@ const LAND = [
   [[114,-22],[122,-18],[136,-12],[142,-11],[146,-19],[153,-27],[150,-37],[140,-38],[130,-32],[115,-34]]
 ];
 
-// Dense City Lights Matrix (Europe, Americas, Asia)
 const CITY_LIGHTS = [
   [51.5,-0.1],[52.5,1.9],[53.4,-2.2],[52.4,-1.8],[55.8,-4.2],[48.8,2.3],[50.8,4.3],[52.3,4.9],[51.2,3.2],
   [52.5,13.4],[50.1,8.6],[48.1,11.5],[53.5,9.9],[51.4,6.9],[41.9,12.5],[45.4,9.1],[40.8,14.2],[43.7,11.2],
@@ -147,7 +135,6 @@ const CITY_LIGHTS = [
   [22.3,114.1],[31.2,121.4],[39.9,116.4],[23.1,113.2],[35.6,139.6],[34.6,135.5],[37.5,126.9],[-33.8,151.2],[-37.8,144.9]
 ];
 
-// 21 Detailed Aircraft Subsystems (Preserved 100%)
 const AIRCRAFT_PARTS = [
   { id: 'radar', ata: 'ATA 34-41', category: 'avionics', title: 'Multiscan Weather Radar', shortName: 'Weather Radar', pos: [310, -5, 0], explodeDir: [1.2, 0, 0], leadOffset: [-70, -70], desc: 'Planar phased array radar scanner antenna with auto-tilt and predictive windshear detection.', specs: { 'Band': 'X-Band (9.33 GHz)', 'Scan': '±90° Azimuth', 'Range': '320 NM' }, health: '99.4% Nominal', telemetry: { 'RF Power': '150W Solid State', 'Tilt': '+1.4°', 'RPM': '32 RPM' } },
   { id: 'cockpit', ata: 'ATA 31-60', category: 'avionics', title: 'Integrated Glass Flight Deck', shortName: 'Flight Deck (PFD/ND)', pos: [255, -22, 0], explodeDir: [0.6, -0.6, 0], leadOffset: [-80, -90], desc: 'Dual pilot stations with 6 active-matrix LCD screens, dual yokes, throttle pedestal, and MCP.', specs: { 'Displays': '6x 10.4" AMLCD', 'FMS': 'Dual Collins FMS-4200', 'Cert': 'CAT IIIb Autoland' }, health: '98.8% Operational', telemetry: { 'Bus Voltage': '28.4 VDC', 'Nav Sync': 'Active / GPS L1', 'Cabin Alt': '6,100 ft' } },
@@ -181,9 +168,6 @@ const CAMERA_PRESETS = {
   tail:    { yaw: -0.85, pitch: 0.28, zoom: 1.45, panX: 180, panY: 20, explode: 0.35, label: 'Tail & APU' }
 };
 
-// ============================================================================
-// MAIN HOME ROUTE RENDERER
-// ============================================================================
 function renderHome() {
   const c = document.getElementById('view-home') || document.getElementById('home');
   if (!c) return;
@@ -541,9 +525,6 @@ window.toggleRouteStatus = function(id) {
   if (r) { r.active = !r.active; if (typeof saveState === 'function') saveState(); updateGlobeRouteList(); }
 };
 
-// ============================================================================
-// 3D Canvas Graphics Engine with Viewport-Throttling (Zero Lag)
-// ============================================================================
 function initHomeCanvas() {
   const canvas = document.getElementById('homeCanvas');
   if (!canvas) return;
@@ -806,10 +787,6 @@ function tapGlobe(px, py) {
   }
 }
 
-// -------------------------------------------------------------
-// PHOTOREALISTIC GLOBE WITH RICH ENVIRONMENTAL FEATURES
-// (Auroras, Sun Glint, Polar Ice, Twilight Ring & 3D Arcs)
-// -------------------------------------------------------------
 function drawGlobeScene(ctx, width, height) {
   const c = ctx;
   const cx = width / 2;
@@ -824,7 +801,6 @@ function drawGlobeScene(ctx, width, height) {
   const sx = (sp[0] - cx) / R;
   const sy = (sp[1] - cy) / R;
 
-  // 1. Deep Space Void with Realistic Starfield
   c.clearRect(0, 0, width, height);
   c.fillStyle = "#02040a";
   c.fillRect(0, 0, width, height);
@@ -844,7 +820,6 @@ function drawGlobeScene(ctx, width, height) {
   });
   c.globalAlpha = 1;
 
-  // 2. Solar Glare from Sun
   const sunGlare = c.createRadialGradient(cx + R * 1.15, cy - R * 0.3, 0, cx + R * 1.15, cy - R * 0.3, R * 0.9);
   sunGlare.addColorStop(0, "rgba(255, 255, 255, 0.95)");
   sunGlare.addColorStop(0.2, "rgba(180, 230, 255, 0.4)");
@@ -853,7 +828,6 @@ function drawGlobeScene(ctx, width, height) {
   c.fillStyle = sunGlare;
   c.fillRect(0, 0, width, height);
 
-  // 3. Electric Cyan / Deep Blue Atmospheric Limb Scattering Halo
   const atmoHalo = c.createRadialGradient(cx, cy, R * 0.92, cx, cy, R * 1.34);
   atmoHalo.addColorStop(0, "rgba(56, 189, 248, 0.95)");
   atmoHalo.addColorStop(0.25, "rgba(14, 165, 233, 0.55)");
@@ -865,22 +839,19 @@ function drawGlobeScene(ctx, width, height) {
   c.arc(cx, cy, R * 1.34, 0, Math.PI * 2);
   c.fill();
 
-  // 4. Planet Sphere Clip
   c.save();
   c.beginPath();
   c.arc(cx, cy, R, 0, Math.PI * 2);
   c.clip();
 
-  // Deep Blue Oceanic Water Surface
   const oceanGrad = c.createRadialGradient(cx + R * 0.3, cy - R * 0.2, R * 0.1, cx, cy, R);
-  oceanGrad.addColorStop(0, "#0ea5e9");   // Turquoise sunlit waters
-  oceanGrad.addColorStop(0.35, "#0284c7"); // Royal blue
-  oceanGrad.addColorStop(0.7, "#033b8a");  // Deep ocean
-  oceanGrad.addColorStop(1, "#020d24");    // Abyssal marine blue
+  oceanGrad.addColorStop(0, "#0ea5e9");   
+  oceanGrad.addColorStop(0.35, "#0284c7"); 
+  oceanGrad.addColorStop(0.7, "#033b8a"); 
+  oceanGrad.addColorStop(1, "#020d24");  
   c.fillStyle = oceanGrad;
   c.fillRect(cx - R, cy - R, 2 * R, 2 * R);
 
-  // [ENVIRONMENTAL ELEMENT 1]: Ocean Sun Glint / Specular Light Reflection
   const glintX = cx + sx * R * 0.45;
   const glintY = cy + sy * R * 0.45;
   const glintGrad = c.createRadialGradient(glintX, glintY, 0, glintX, glintY, R * 0.35);
@@ -892,7 +863,6 @@ function drawGlobeScene(ctx, width, height) {
   c.arc(glintX, glintY, R * 0.35, 0, Math.PI * 2);
   c.fill();
 
-  // 5. Continents with Coastal Shelf Glow
   LAND.forEach(P => {
     let vis = 0;
     const pts = P.map(q => {
@@ -912,14 +882,13 @@ function drawGlobeScene(ctx, width, height) {
     c.beginPath();
     pts.forEach((p, k) => { k ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1]); });
     c.closePath();
-    c.fillStyle = "#15803d"; // Forest green
+    c.fillStyle = "#15803d";
     c.fill();
-    c.strokeStyle = "rgba(56, 189, 248, 0.65)"; // Coastal shelf glow
+    c.strokeStyle = "rgba(56, 189, 248, 0.65)"; 
     c.lineWidth = 1.5;
     c.stroke();
   });
 
-  // [ENVIRONMENTAL ELEMENT 2]: Polar Glacial Ice Caps (Arctic & Antarctic)
   const northPole = proj(vec(85, globeState.lon));
   if (northPole[2] > -0.2) {
     const iceGradN = c.createRadialGradient(northPole[0], northPole[1] - R * 0.05, 0, northPole[0], northPole[1], R * 0.28);
@@ -944,7 +913,6 @@ function drawGlobeScene(ctx, width, height) {
     c.fill();
   }
 
-  // 6. Day / Night Terminator Shadow
   const termGrad = c.createRadialGradient(cx + R * 0.5, cy - R * 0.2, 0, cx + R * 0.5, cy - R * 0.2, R * 1.6);
   termGrad.addColorStop(0.4, "rgba(0, 0, 0, 0)");
   termGrad.addColorStop(0.7, "rgba(2, 6, 23, 0.75)");
@@ -952,7 +920,6 @@ function drawGlobeScene(ctx, width, height) {
   c.fillStyle = termGrad;
   c.fillRect(cx - R, cy - R, 2 * R, 2 * R);
 
-  // [ENVIRONMENTAL ELEMENT 3]: Sunset / Twilight Golden Ring along Terminator
   const twilight = c.createLinearGradient(cx - R * 0.1, cy - R, cx + R * 0.3, cy + R);
   twilight.addColorStop(0, "rgba(249, 115, 22, 0)");
   twilight.addColorStop(0.48, "rgba(249, 115, 22, 0.32)");
@@ -961,7 +928,6 @@ function drawGlobeScene(ctx, width, height) {
   c.fillStyle = twilight;
   c.fillRect(cx - R, cy - R, 2 * R, 2 * R);
 
-  // 7. Glowing Golden & Violet Night City Lights
   CITY_LIGHTS.forEach((coord, idx) => {
     const v = vec(coord[0], coord[1]);
     const p = proj(v);
@@ -972,15 +938,14 @@ function drawGlobeScene(ctx, width, height) {
       c.beginPath();
       c.arc(p[0], p[1], 1.6, 0, Math.PI * 2);
       if (idx % 4 === 0) {
-        c.fillStyle = "rgba(216, 180, 254, " + (intensity * 0.85) + ")"; // Violet
+        c.fillStyle = "rgba(216, 180, 254, " + (intensity * 0.85) + ")";
       } else {
-        c.fillStyle = "rgba(253, 224, 71, " + (intensity * 0.95) + ")"; // Golden Amber
+        c.fillStyle = "rgba(253, 224, 71, " + (intensity * 0.95) + ")"; 
       }
       c.fill();
     }
   });
 
-  // [ENVIRONMENTAL ELEMENT 4]: Dynamic Aurora Borealis & Australis (Dancing Curtains)
   const auroraColor = "rgba(16, 185, 129, " + (0.35 + Math.sin(globeState.t * 3) * 0.15) + ")";
   c.strokeStyle = auroraColor;
   c.lineWidth = 4;
@@ -994,7 +959,6 @@ function drawGlobeScene(ctx, width, height) {
   }
   c.stroke();
 
-  // Southern Aurora Australis
   c.strokeStyle = "rgba(6, 182, 212, " + (0.3 + Math.cos(globeState.t * 2.5) * 0.12) + ")";
   c.beginPath();
   for (let sLon = -180; sLon <= 180; sLon += 10) {
@@ -1006,7 +970,6 @@ function drawGlobeScene(ctx, width, height) {
   }
   c.stroke();
 
-  // Atmospheric Inner Fresnel Grazing Glow
   const innerFresnel = c.createRadialGradient(cx, cy, R * 0.82, cx, cy, R);
   innerFresnel.addColorStop(0, "rgba(56, 189, 248, 0)");
   innerFresnel.addColorStop(0.85, "rgba(56, 189, 248, 0.18)");
@@ -1014,16 +977,14 @@ function drawGlobeScene(ctx, width, height) {
   c.fillStyle = innerFresnel;
   c.fillRect(cx - R, cy - R, 2 * R, 2 * R);
 
-  c.restore(); // Exit planet clip
+  c.restore(); 
 
-  // 8. Outer Rim Precision Ring
   c.strokeStyle = "rgba(125, 211, 255, 0.75)";
   c.lineWidth = 1.5;
   c.beginPath();
   c.arc(cx, cy, R, 0, Math.PI * 2);
   c.stroke();
 
-  // 9. Elevated 3D Flight Routes & Photorealistic 3D Aircraft
   const state = getMroState();
   const routes = (state.routes && state.routes.length) ? state.routes : [
     { origin: "LHR", dest: "JFK", active: true, flightNo: "BA-178" },
@@ -1048,7 +1009,6 @@ function drawGlobeScene(ctx, width, height) {
     const b = vec(toAp[0], toAp[1]);
     const A = getOrCreateArc(fromCode + "-" + toCode, a, b);
 
-    // Render Elevated Great-Circle Arc (Electric Cyan Neon)
     c.save();
     c.beginPath();
     let first = true;
@@ -1065,12 +1025,10 @@ function drawGlobeScene(ctx, width, height) {
     c.stroke();
     c.restore();
 
-    // 3D Airplane Flying with Navigation Strobes & Drop-Shadow Pin
     r.prog = ((r.prog || (rIdx * 0.13)) + 0.0007) % 1;
     const cur = at(A, r.prog);
     const nxt = at(A, Math.min(0.999, r.prog + 0.012));
 
-    // Ground point directly beneath the plane (altitude = 0)
     const iFloor = Math.max(0, Math.min(r.prog, 0.9999)) * (A.length - 1);
     const i0 = Math.floor(iFloor), f = iFloor - i0;
     const groundPt = proj([
@@ -1080,7 +1038,6 @@ function drawGlobeScene(ctx, width, height) {
     ], 0);
 
     if (cur[2] > 0) {
-      // Altitude Drop-Shadow Pin connecting jet to the globe surface
       c.beginPath();
       c.moveTo(groundPt[0], groundPt[1]);
       c.lineTo(cur[0], cur[1]);
@@ -1090,26 +1047,22 @@ function drawGlobeScene(ctx, width, height) {
       c.stroke();
       c.setLineDash([]);
 
-      // Surface shadow contact dot
       c.beginPath();
       c.arc(groundPt[0], groundPt[1], 1.8, 0, Math.PI * 2);
       c.fillStyle = "rgba(56, 189, 248, 0.55)";
       c.fill();
 
-      // 3D Aircraft Silhouette
       const flightAngle = Math.atan2(nxt[1] - cur[1], nxt[0] - cur[0]);
       c.save();
       c.translate(cur[0], cur[1]);
       c.rotate(flightAngle);
 
-      // Jet engine exhaust glow
       c.strokeStyle = "rgba(0, 240, 255, 0.65)";
       c.lineWidth = 2.5;
       c.beginPath();
       c.moveTo(-10, 0); c.lineTo(-3, 0);
       c.stroke();
 
-      // Swept-Wing Airliner Body
       c.fillStyle = "#ffffff";
       c.shadowColor = "#38bdf8";
       c.shadowBlur = 10;
@@ -1132,7 +1085,6 @@ function drawGlobeScene(ctx, width, height) {
       c.fill();
       c.shadowBlur = 0;
 
-      // Flashing Wingtip Strobes (Green right, Red left)
       if (Math.sin(globeState.t * 10) > 0) {
         c.fillStyle = "#22c55e";
         c.beginPath(); c.arc(-3, 9.5, 1.4, 0, Math.PI * 2); c.fill();
@@ -1144,47 +1096,39 @@ function drawGlobeScene(ctx, width, height) {
     }
   });
 
-  // [ENVIRONMENTAL ELEMENT 5]: Orbiting Low Earth Orbit Space Satellite (ISS)
   const satRad = R * 1.18;
   const satX = cx + Math.cos(globeState.satelliteAngle) * satRad;
   const satY = cy + Math.sin(globeState.satelliteAngle) * satRad * 0.45;
-  // Satellite Body & Solar Panels
+  
   c.fillStyle = "#ffffff";
   c.fillRect(satX - 4, satY - 2, 8, 4);
   c.fillStyle = "#00f0ff";
   c.fillRect(satX - 10, satY - 1.5, 5, 3);
   c.fillRect(satX + 5, satY - 1.5, 5, 3);
-  // Blinking Beacon
+
   if (Math.sin(globeState.t * 8) > 0.5) {
     c.fillStyle = "#ef4444";
     c.beginPath(); c.arc(satX, satY - 3, 1.8, 0, Math.PI * 2); c.fill();
   }
 
-  // 10. Airport Hubs with Pulsing Radar Rings
   Object.keys(AP).forEach(k => {
     const p = proj(vec(AP[k][0], AP[k][1]), 0.005);
     if (p[2] < 0.05) return;
 
-    // Pulsing radar beacon ring
     const pulseR = 3.5 + Math.abs(Math.sin(globeState.t * 2 + AP[k][0])) * 5;
     c.strokeStyle = "rgba(56, 189, 248, 0.45)";
     c.lineWidth = 1;
     c.beginPath(); c.arc(p[0], p[1], pulseR, 0, Math.PI * 2); c.stroke();
 
-    // Center hub dot
     c.strokeStyle = "rgba(253, 224, 71, 0.85)"; c.lineWidth = 1.2;
     c.beginPath(); c.arc(p[0], p[1], 3.5, 0, Math.PI * 2); c.stroke();
     c.fillStyle = "#ffffff"; c.beginPath(); c.arc(p[0], p[1], 1.8, 0, Math.PI * 2); c.fill();
 
-    // Hub Code Text Badge
     c.fillStyle = "#ffffff"; c.font = "bold 10px monospace"; c.shadowColor = "#000"; c.shadowBlur = 4;
     c.fillText(k, p[0] + 6, p[1] + 3); c.shadowBlur = 0;
   });
 }
 
-// -------------------------------------------------------------
-// 3D AIRCRAFT CUTAWAY SCENE (Preserved 100%)
-// -------------------------------------------------------------
 function project3D(x, y, z, cx, cy, cam) {
   const cyaw = Math.cos(cam.yaw), syaw = Math.sin(cam.yaw);
   const cpitch = Math.cos(cam.pitch), spitch = Math.sin(cam.pitch);
@@ -1227,7 +1171,6 @@ function drawAircraftScene(ctx, width, height) {
   const items = [];
   const pr = (x, y, z, ex = 0, ey = 0, ez = 0) => project3D(x + ex * E * 90, y + ey * E * 90, z + ez * E * 90, cx, cy, acCam);
 
-  // 1. Radome & Weather Radar Dish
   items.push({
     depth: pr(310, -5, 0, 1.2, 0, 0).depth,
     draw: () => {
@@ -1251,7 +1194,6 @@ function drawAircraftScene(ctx, width, height) {
     }
   });
 
-  // 2. Cockpit Flight Deck
   items.push({
     depth: pr(255, -20, 0, 0.6, -0.6, 0).depth,
     draw: () => {
@@ -1269,7 +1211,6 @@ function drawAircraftScene(ctx, width, height) {
     }
   });
 
-  // 3. Cabin Deck & Seats
   items.push({
     depth: pr(0, -14, 0, 0, -0.4, 0).depth,
     draw: () => {
@@ -1304,7 +1245,6 @@ function drawAircraftScene(ctx, width, height) {
     }
   });
 
-  // 4. Wings & Rotating Titanium Turbofans
   [-1, 1].forEach(side => {
     items.push({
       depth: pr(0, 0, side * 140, 0, 0, side * 0.4).depth,
@@ -1342,7 +1282,6 @@ function drawAircraftScene(ctx, width, height) {
     });
   });
 
-  // 5. Tail Fin & APU
   items.push({
     depth: pr(-250, -40, 0, -0.8, -0.8, 0).depth,
     draw: () => {
@@ -1463,7 +1402,6 @@ window.jumpToWorkOrder = function(title) {
   if (planTab) planTab.click();
 };
 
-// Global DOM Mount
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', renderHome);
 } else {

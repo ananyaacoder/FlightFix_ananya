@@ -1,7 +1,3 @@
-/* ==============================================================================
-   FlightFix MRO — Main Application Controller & Navigation Router
-   ============================================================================== */
-
 var TABS = [
   ["home", "Radar & 3D"],
   ["dash", "Fleet Matrix"],
@@ -12,9 +8,8 @@ var TABS = [
   ["login", "Login/SignUp"]
 ];
 
-// Public tabs accessible without authentication
 var PUBLIC_TABS = ["home", "login"];
-// Admin-only tabs strictly blocked for technicians & guests
+
 var ADMIN_ONLY_TABS = ["plan", "inv", "erp", "tech"];
 
 var VIEWS = {
@@ -48,7 +43,6 @@ function go(tab) {
   var user = (typeof getStoredUser === "function") ? getStoredUser() : null;
   var isAdmin = loggedIn && ((typeof isUserAdmin === "function") ? isUserAdmin(user) : !!(user && user.role && user.role.toLowerCase().includes("admin")));
 
-  // Authentication Route Guard
   if (!loggedIn && PUBLIC_TABS.indexOf(tab) === -1) {
     if (typeof notify === "function") {
       notify("Access Restricted: Please sign in to access FlightFix MRO portals.");
@@ -57,7 +51,7 @@ function go(tab) {
     }
     tab = "login";
   }
-  // Role-Based Route Guard: Prevent technicians from accessing admin-only pages
+
   else if (loggedIn && !isAdmin && ADMIN_ONLY_TABS.indexOf(tab) !== -1) {
     if (typeof notify === "function") {
       notify("Access Restricted: Only Company Admins can manage Planning, Spares & ERP.");
@@ -100,11 +94,11 @@ function render() {
   var user = (typeof getStoredUser === "function") ? getStoredUser() : null;
   var isAdmin = loggedIn && ((typeof isUserAdmin === "function") ? isUserAdmin(user) : !!(user && user.role && user.role.toLowerCase().includes("admin")));
 
-  // Enforce public restriction for visitors who are not logged in
+
   if (!loggedIn && PUBLIC_TABS.indexOf(S.tab) === -1) {
     S.tab = "home";
   }
-  // Enforce admin restriction for technicians
+
   else if (loggedIn && !isAdmin && ADMIN_ONLY_TABS.indexOf(S.tab) !== -1) {
     S.tab = "dash";
   }
@@ -120,11 +114,11 @@ function render() {
   document.querySelectorAll("body > section.view").forEach(
     function(s) {
       var isTarget = (s.id === S.tab || s.id === "view-" + S.tab);
-      // Strictly prevent protected views from rendering when unauthenticated
+    
       if (!loggedIn && PUBLIC_TABS.indexOf(s.id) === -1) {
         isTarget = false;
       }
-      // Strictly prevent admin views from rendering for technicians
+      
       if (loggedIn && !isAdmin && ADMIN_ONLY_TABS.indexOf(s.id) !== -1) {
         isTarget = false;
       }
@@ -140,7 +134,6 @@ function render() {
   if (typeof save === "function") save();
 }
 
-/* Live clock + flight hours accrual engine */
 setInterval(function() {
   var clockEl = $("clock");
   if (clockEl) {
@@ -173,16 +166,12 @@ setInterval(function() {
   }
 }, 1000);
 
-// Clean up any legacy localStorage session leak so other tabs/windows start fresh
 try {
   localStorage.removeItem("flightfix_current_user");
   localStorage.removeItem("flightfix_user");
 } catch(e) {}
 
-// Initial boot
 var loggedInBoot = (typeof isUserLoggedIn === "function") ? isUserLoggedIn() : false;
 if (!S) S = {};
-// Starting condition: if not logged in on this side, ALWAYS default strictly to front page 'home'
-// Always make 'home' the default starting page on initial load
 S.tab = 'home';
 render();

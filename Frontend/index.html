@@ -8,7 +8,7 @@
 </head>
 <body class="not-logged-in">
 
-  <!-- TOP NAVIGATION BAR -->
+
   <header>
     <div class="logo">
       <div class="logo-icon">
@@ -19,44 +19,36 @@
       </div>
     </div>
 
-    <!-- Active User & Role Display (Strict: Visible only when logged in on this side) -->
     <div class="session-badge-container" style="display: none;">
       <span id="nav-user-name"></span>
       <span id="nav-role-badge" class="role-badge"></span>
     </div>
 
     <nav id="nav">
-      <!-- Public Buttons: Always visible -->
+
       <button id="nav-home" onclick="showView('home')">Home</button>
 
-      <!-- Protected Buttons: Strictly hidden before login -->
       <button id="nav-dash" class="nav-auth-only" onclick="showView('dash')" style="display: none;">Dashboard</button>
       <button id="nav-plan" class="nav-auth-only nav-admin-only" onclick="showView('plan')" style="display: none;">Plan</button>
       <button id="nav-inv" class="nav-auth-only nav-admin-only" onclick="showView('inv')" style="display: none;">Inventory</button>
       <button id="nav-erp" class="nav-auth-only nav-admin-only" onclick="showView('erp')" style="display: none;">ERP</button>
       <button id="nav-tech" class="nav-auth-only nav-admin-only" onclick="showView('tech')" style="display: none;">Tech</button>
 
-      <!-- Login & Logout Dynamic Buttons -->
       <button id="nav-login-btn" class="btn-auth-nav" onclick="showView('login')">Login / Sign Up</button>
       <button id="nav-logout-btn" class="btn-logout-nav" onclick="logoutUser()" style="display: none;">Logout</button>
 
-      <!-- Maintenance Reset (Protected - Admin only) -->
       <button id="nav-reset" class="btn red nav-auth-only nav-admin-only" onclick="resetAll()" style="display: none;">Reset demo data</button>
     </nav>
   </header>
 
-  <!-- VIEW CONTAINERS -->
-  <!-- Public Views -->
   <section id="home" class="view on"></section>
 
-  <!-- Protected Views: Strictly hidden before login -->
   <section id="dash" class="view" style="display: none;"></section>
   <section id="plan" class="view" style="display: none;"></section>
   <section id="inv" class="view" style="display: none;"></section>
   <section id="erp" class="view" style="display: none;"></section>
   <section id="tech" class="view" style="display: none;"></section>
 
-  <!-- AUTH / PRIVATE DUAL-ROLE REGISTRATION & LOGIN VIEW -->
   <section id="login" class="view" style="display: none;">
     <div class="auth-container">
       <div class="auth-tabs">
@@ -64,7 +56,6 @@
         <button id="tab-register" class="auth-tab-btn" onclick="switchAuthTab('register')">Register New Account</button>
       </div>
 
-      <!-- 1. PRIVATE SIGN IN FORM -->
       <div id="form-login-block">
         <form onsubmit="handleFormLogin(event)">
           <div class="auth-form-group">
@@ -79,7 +70,6 @@
         </form>
       </div>
 
-      <!-- 2. REGISTRATION FORM WITH DISTINCT ROLE SELECTION -->
       <div id="form-register-block" style="display: none;">
         <form onsubmit="handleFormRegister(event)">
           <div class="auth-form-group">
@@ -95,7 +85,6 @@
             <input type="text" id="reg-empid" placeholder="e.g. EMP-501 or AME-3049" required>
           </div>
 
-          <!-- Distinct Role Selection -->
           <div class="auth-form-group">
             <label for="reg-role">Account Type & Dashboard Access:</label>
             <select id="reg-role" required>
@@ -118,13 +107,11 @@
     </div>
   </section>
 
-  <!-- Core Scripts -->
   <script src="js/state.js"></script>
   <script src="js/api.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/utils.js"></script>
 
-  <!-- View Scripts (Must be loaded before app.js) -->
   <script src="js/views/home.js"></script>
   <script src="js/views/dashboard.js"></script>
   <script src="js/views/workorders.js"></script>
@@ -133,10 +120,8 @@
   <script src="js/views/technician.js"></script>
   <script src="js/views/login.js"></script>
 
-  <!-- Main Controller (Must be LAST) -->
   <script src="js/app.js"></script>
 
-  <!-- Notification Toast Container -->
   <div id="toast"></div>
 
 </body>

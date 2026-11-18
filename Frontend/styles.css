@@ -1364,9 +1364,6 @@
           color: #d1d5db;
         }
 
-        /* ==========================================================================
-           VIEW ROUTING & CONTAINER VISIBILITY
-           ========================================================================== */
         .view {
           display: none;
           width: 100%;
@@ -1377,9 +1374,7 @@
           display: block;
         }
 
-        /* ==========================================================================
-           SESSION & ROLE INDICATORS IN NAVIGATION BAR
-           ========================================================================== */
+       
         .session-badge-container {
           display: flex;
           align-items: center;
@@ -1468,9 +1463,6 @@
           color: #ffffff !important;
         }
 
-        /* ==========================================================================
-           LOGIN & REGISTRATION CARD STYLES
-           ========================================================================== */
         .auth-container {
           max-width: 480px;
           margin: 48px auto;
@@ -1608,9 +1600,6 @@
           color: #ffffff;
         }
 
-        /* ==========================================================================
-           DUAL DASHBOARD UI (COMPANY ADMIN & FIELD TECHNICIAN)
-           ========================================================================== */
         .role-pill {
           display: inline-flex;
           align-items: center;
@@ -1644,7 +1633,7 @@
           color: #ffffff;
         }
 
-        /* Field Technician Workbench Cards */
+        
         .tech-task-card {
           background: #0c1424;
           border: 1px solid var(--bd);
@@ -1665,7 +1654,7 @@
           background: rgba(16, 185, 129, 0.04);
         }
 
-        /* Procurement & Approval PO Item Cards (Admin) */
+        
         .po-item-card {
           background: #0c1424;
           border: 1px solid var(--bd);
@@ -1683,9 +1672,6 @@
         }
 
 
-/* ==========================================================================
-   AUTHENTICATION VISIBILITY GUARDS (Strict Hide Before Login)
-   ========================================================================== */
 body.not-logged-in .session-badge-container,
 body.not-logged-in .nav-auth-only,
 body.not-logged-in #nav-dash,
@@ -1711,9 +1697,6 @@ body.logged-in .session-badge-container {
   display: inline-flex !important;
 }
 
-/* ==========================================================================
-   ADMIN-ONLY NAVIGATION & VIEWS (Strictly hidden from Field Technicians & Guests)
-   ========================================================================== */
 body.role-technician .nav-admin-only,
 body.role-technician #nav-plan,
 body.role-technician #nav-inv,

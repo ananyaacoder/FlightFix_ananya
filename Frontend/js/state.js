@@ -1,4 +1,3 @@
-/* Application state + persistence (localStorage) */
 var KEY = "flightfix-v2";
 var DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri"];
 var DUR = { "A-Check": 1, "C-Check": 3, "Engine Insp.": 2 };
@@ -18,7 +17,7 @@ function seed() {
       { r: "VT-FLD", t: "B777", h: 30110, aog: 1 },
       { r: "VT-FLE", t: "B787", h: 18400, aog: 0 }
     ],
-    // Dynamic Company Flight Routes (matches reference image network)
+
     routes: [
       { id: "FL-101", ac: "VT-FLA", from: "JFK", to: "LHR", s: "active",  prog: 0.65 },
       { id: "FL-204", ac: "VT-FLB", from: "MIA", to: "BOG", s: "active",  prog: 0.40 },
@@ -26,7 +25,7 @@ function seed() {
       { id: "FL-412", ac: "VT-FLE", from: "LAX", to: "HND", s: "active",  prog: 0.80 },
       { id: "FL-515", ac: "VT-FLB", from: "DXB", to: "DEL", s: "active",  prog: 0.55 },
       { id: "FL-618", ac: "VT-FLC", from: "EZE", to: "LIM", s: "active",  prog: 0.70 },
-      { id: "FL-720", ac: "VT-FLD", from: "SIN", to: "SYD", s: "grounded",prog: 0.00 } // Grounded by AOG
+      { id: "FL-720", ac: "VT-FLD", from: "SIN", to: "SYD", s: "grounded",prog: 0.00 } 
     ],
     parts: [
       { id: "MW-2231", n: "Main wheel assembly", q: 2,  m: 3 },
@@ -50,7 +49,7 @@ function seed() {
 var S;
 try { S = JSON.parse(localStorage.getItem(KEY)); } catch(e){}
 if (!S || !S.ac || !S.parts) S = seed();
-if (!S.routes) S.routes = seed().routes; // Seamless upgrade
+if (!S.routes) S.routes = seed().routes; 
 S.tab = "home";
 
 function save() {

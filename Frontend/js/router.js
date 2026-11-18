@@ -27,7 +27,7 @@
       const appContainer = document.getElementById('app') || document.querySelector('main') ||
   document.body;
 
-      // Highlight active navigation link
+      
       document.querySelectorAll('nav a').forEach(link => {
         link.classList.toggle('active', link.getAttribute('href') === hash);
       });

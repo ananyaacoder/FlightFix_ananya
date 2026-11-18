@@ -11,9 +11,6 @@ import csv
 import json
 from datetime import datetime, timedelta
 
-    # =====================================================
-    # Domain Logic & Validation Utilities
-    # =====================================================
 
 KNOWN_AIRPORTS = {
         'ORD', 'BLR', 'FRA', 'DFW', 'SEA', 'SFO', 'ICN',
@@ -133,9 +130,6 @@ SAMPLE_DATASET = [
     ]
 
 
-    # =====================================================
-    # Part 1: Simple Test Cases (TC-001 – TC-035)
-    # =====================================================
 
 class TestSimpleCases(unittest.TestCase):
 
@@ -295,9 +289,6 @@ class TestSimpleCases(unittest.TestCase):
             self.assertEqual(flight['flight_number'], 'CX6375')
 
 
-    # =====================================================
-    # Part 2: Systematic Test Cases (TC-036 – TC-070)
-    # =====================================================
 
 class TestSystematicCases(unittest.TestCase):
 
@@ -520,9 +511,6 @@ class TestSystematicCases(unittest.TestCase):
             self.assertTrue(bool(token))
 
 
-    # =====================================================
-    # Part 3: Logical & Business Rule Test Cases (TC-071 – TC-100)
-    # =====================================================
 
 class TestLogicalCases(unittest.TestCase):
 
